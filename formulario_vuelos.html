@@ -1,0 +1,226 @@
+
+	<section class="parallax-window" data-parallax="scroll" data-image-src="img/parallax_bg_1.jpg" data-natural-width="1400" data-natural-height="470" style="background-image: url('img/headers/vuelos.jpg'); background-position: center;">
+		<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+			<div class="animated fadeInDown">
+				<h1>VUELOS</h1>
+				<p>
+					Encuentra y reserva tus vuelos de manera rápida y fácil.
+				</p>			
+			</div>
+			<div class="animated fadeInDown" style="position: absolute; bottom: 0; left: 20px; padding: 20px; color: white;">
+				<button class="btn_1 green" style="background-color: #838881; display: flex; align-items: center; justify-content: center;" onclick="goBack()">
+					<i class="icon-right" style="font-size: 20px;"></i>
+					Regresar
+				</button>	
+			</div>
+		</div>
+	</section>
+	<!-- End section -->
+
+	
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li><a href="/listaVuelos">Lista vuelos</a></li>
+					<li>Formulario</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+		
+		<div class="container margin_60">
+
+			<div class="main_title">
+				<h2>Información <span>Personal </span></h2>
+				<p>
+					Ingresa los siguientes datos para completar tu reserva.
+				</p>
+			</div>
+			<div class="row mb-4">
+				<div class="col-lg-8"></div>
+				<div class="col-lg-2" style="display: flex; align-items: end; justify-content: end;">
+					<a href="#" onclick="cotizarReserva('pdf'); return false;" class="btn btn-secondary" id="generatePDF" >
+						<i data-feather="download" class="icons-sm"></i>
+						<span> Cotizar </span>
+					</a>
+				</div>
+				<div class="col-lg-2" style="display: flex;">
+					<a href="#" onclick="hacerReserva(); return false;" class="btn" id="botonReserva" style="background-color: #99c21c; color: white;">
+						<i class="icon-plane"></i>
+						<span> Reservar </span>
+					</a>
+				</div>
+			</div>
+			
+			<div class="row">
+				<aside class="col-lg-4">
+					<div id="pdf">
+						<div class="mb-3" id="cotizacionTitulo" style="display: none;">
+							<div class="page-title-box" style="align-items: center; display: flex; justify-content: center;">
+								<h2 class="page-title" style="font-size: 40px;">COTIZACIÓN</h2>
+							</div> 
+						</div>
+						<div class="card mb-4">
+							<div class="card-body">
+								<span class="tape"></span>
+								<div id="costosForm">
+								</div>
+							</div>
+						</div>
+						
+						<div class="card mb-4" id="datosResumenIda">
+							<div class="card-body">
+								<span class="tape"></span>
+								<div class="row">
+									<div class="col-10" >
+										<i class="icon-plane" style="margin-right: 10px; transform: rotate(45deg) !important; display: inline-block; font-size: 18px;"></i>
+										<span style="font-size: 18px;"><strong>Vuelo Ida</strong></span>
+									</div>
+									<div class="col-2" style ="display: flex; justify-content: end;">
+										<a data-bs-toggle="collapse" href="#cardCollpase1" role="button" aria-expanded="false" aria-controls="cardCollpase1"><i class="mdi mdi-minus" style="font-size:30px"></i></a>
+									</div>        
+								</div>
+								<div class="row collapse show" id="cardCollpase1">
+									<p>hola</p>
+								</div>
+							</div>
+						</div>
+			
+			
+						<div class="card mb-4" id="datosResumenVuelta">
+							<div class="card-body">
+								<span class="tape"></span>
+								<div class="row">
+									<div class="col-10" >
+										<i class="icon-plane" style="margin-right: 10px; transform: rotate(225deg) !important; display: inline-block; font-size: 18px;"></i>
+										<span style="font-size: 18px;"><strong>Vuelo vuelta</strong></span>
+									</div>
+									<div class="col-2" style ="display: flex; justify-content: end;">
+										<a data-bs-toggle="collapse" href="#cardCollpase2" role="button" aria-expanded="false" aria-controls="cardCollpase1"><i class="mdi mdi-minus" style="font-size:30px"></i></a>
+									</div>        
+								</div>
+								<div class="row collapse show" id="cardCollpase2">
+								
+								</div>
+							</div>
+						</div>
+
+						<div class="box_style_2 d-none d-sm-block">
+							<i class="icon_set_1_icon-57"></i>
+							<h4>¿Necesitas <span>Ayuda?</span></h4>
+							<a href="tel://+59388182490" class="phone">+59388182490</a>
+							<small>Contactanos para ayudarte con tu reserva</small>
+						</div>
+						<div id="descripcionCotizacion" style="display: none;">
+							<h4>
+								La presente cotización no implica reserva y está sujeta a cambios hasta el momento que la reserva se confirme.
+							</h4>
+						</div>
+					</div>
+					
+				</aside>
+
+				<div class="col-lg-8">
+					<div id="informacionClientes">
+
+					</div>
+					<br><br>
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="main_title">
+								<h2>Datos <span>Facturación </span></h2>
+								<p>
+									Ingresa los datos para tu factura.
+								</p>
+							</div>     
+						</div>
+			
+						<div class="col-lg-4" style="display: flex; flex-direction: column; align-items: end; justify-content:left;">
+							<div class="form-check">
+								<input type="radio" id="limpiar" name="customRadio" class="form-check-input" checked>
+								<label class="form-check-label" for="customRadio1">Ingresar nuevos datos </label>
+							</div>
+							<div class="form-check">
+								<input type="radio" id="copiar" name="customRadio" class="form-check-input">
+								<label class="form-check-label" for="customRadio2">Copiar datos de Adulto 1</label>
+							</div>
+						</div>
+			
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-6">
+											<h4 class="card-title mb-3">Datos factura</h4>
+										</div>
+										<div class="col-6" style ="display: flex; justify-content: end;">
+											<a data-bs-toggle="collapse" href="#card" role="button" aria-expanded="false" aria-controls="cardCollpase1"><i class="mdi mdi-minus" style="font-size:30px"></i></a>
+										</div>        
+									</div>
+									<div id="card" class="collapse show">
+										<div class="row">
+											
+											<div class="col-lg-6 mb-3">
+												<label for="simpleinput" class="form-label">Nombre</label>
+												<input type="text" id="nombreFacturacion" class="form-control" placeholder="Ingrese su nombre">
+											</div>
+			
+											<div class="col-lg-6 mb-3">
+												<label for="simpleinput" class="form-label">CI/RUC</label>
+												<input type="text" id="ciFacturacion" class="form-control" placeholder="Ingrese su número de documento">
+											</div>
+			
+											<div class="col-lg-6 mb-3">
+												<label for="simpleinput" class="form-label">Correo</label>
+												<input type="text" id="correoFacturacion" class="form-control" placeholder="Ingrese su correo">
+											</div>
+			
+											<div class="col-lg-6 mb-3">
+												<label for="simpleinput" class="form-label">Telefono</label>
+												<input type="text" id="telefonoFacturacion" class="form-control" placeholder="Ingrese su telefono">
+											</div>
+			
+											<div class="col-lg-6 mb-3">
+												<label for="simpleinput" class="form-label">Dirección</label>
+												<input type="text" id="direccionFacturacion" class="form-control" placeholder="Ingrese su dirección">
+											</div>
+											
+										</div>
+									</div>
+								</div>
+							</div> 
+						</div>
+					</div>
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+		<!-- End container -->
+
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/vuelos/comunVuelos.js"></script>
+	<script src="/js/modulos/vuelos/formularioVuelos.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+
+	<!-- Cat nav mobile -->
+	<script src="/js/cat_nav_mobile.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+
+		$(document).ready(e => {
+            scrollTop()
+			recibirInformacion()
+			cerrarSpinner()
+        })
+	</script>
+
+	
+	
+</body>
+
+</html>

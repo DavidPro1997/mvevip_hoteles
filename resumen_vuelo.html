@@ -1,0 +1,115 @@
+
+	<section class="parallax-window" data-parallax="scroll" data-image-src="img/parallax_bg_1.jpg" data-natural-width="1400" data-natural-height="470" style="background-image: url('img/headers/vuelos.jpg'); background-position: center;">
+		<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+			<div class="animated fadeInDown">
+				<h1>VUELOS</h1>
+				<p>
+					Encuentra y reserva tus vuelos de manera rápida y fácil.
+				</p>			
+			</div>
+		</div>
+	</section>
+	<!-- End section -->
+
+	
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li>Lista vuelos</li>
+					<li>Formulario</li>
+					<li>Resumen</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+		
+		<div class="container margin_60">
+
+			<div class="main_title">
+				<h2>Resumen <span>Reserva </span></h2>
+				<p>
+					Se muestra el resumen de tu reserva.
+				</p>
+			</div>
+			<div class="row mb-2">
+				<div class="col-12" style="align-items: end; display: flex; justify-content: end;">
+					<button class="btn_1 green" style="background-color: #99c21c;" onclick="finalizar()"><i class="icon-check-1"></i>Finalizar</button>
+				</div>
+			</div>
+			<div class="row">
+				<aside class="col-lg-3">
+					<div class="box_style_2 d-none d-sm-block">
+						<i class="icon_set_1_icon-57"></i>
+						<h4>¿Necesitas <span>Ayuda?</span></h4>
+						<a href="tel://+59388182490" class="phone">+59388182490</a>
+						<small>Contactanos para ayudarte con tu reserva</small>
+					</div>
+				</aside>
+				<div class="col-lg-9">
+					<div class="card">
+						<div class="card-body">
+							<br>
+							<div class="col-12" style="display: flex; align-items: end; justify-content: end;">
+								<h4 id="numReserva"></h4>
+							</div>
+							<br>
+							<div id="listaVuelos">
+								
+							</div> <!-- end col -->
+						</div>
+					</div>
+					<br><br>
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title mb-3">Pasajeros</h3>
+							<div class="table-responsive">
+								<table class="table mb-0">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Tipo y N° de Documento</th>
+											<th>Fecha de Nacimiento</th>
+											<th>Nacionalidad</th>
+										</tr>
+									</thead>
+									<tbody id="listaPasajeros">
+										
+									</tbody>
+								</table>
+							</div>
+			
+						</div>
+					</div>
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+		<!-- End container -->
+
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/vuelos/comunVuelos.js"></script>
+	<script src="/js/modulos/vuelos/resumenVuelos.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+
+	<!-- Cat nav mobile -->
+	<script src="/js/cat_nav_mobile.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+
+		$(document).ready(e => {
+            scrollTop()
+			recibirInformacion()
+			cerrarSpinner()
+        })
+	</script>
+
+	
+	
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<style>
+	/* Estilo para la barra de desplazamiento */
+::-webkit-scrollbar {
+  width: 0px; /* Ancho de la barra */
+}
+
+/* Estilo para el track (fondo de la barra) */
+::-webkit-scrollbar-track {
+  background: transparent; /* Fondo transparente */
+}
+
+/* Estilo para la parte que se desplaza */
+::-webkit-scrollbar-thumb {
+background-color: rgba(178, 172, 172, 0.2); /* Color negro con transparencia del 20% */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+</style>
+	
+
+<section id="hero_2" class="background-image" data-background="url(img/slide_hero_2.jpg)" style="background-image: url('https://s1.ppllstatics.com/diariovasco/www/multimedia/202204/29/media/cortadas/compras-online-kJOI-U1601835431030PgD-1248x770@Diario%20Vasco.jpg'); background-position: center;">
+	<div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+		<div class="intro_title" id="estiloHeader">
+			
+		</div>
+		<!-- End intro-title -->
+	</div>
+	<!-- End opacity-mask-->
+</section>
+
+
+	
+	<!-- <section class="parallax-window" data-parallax="scroll" data-image-src="img/home_bg_1.jpg" data-natural-width="1400" data-natural-height="470" style="background-image: url('https://s1.ppllstatics.com/diariovasco/www/multimedia/202204/29/media/cortadas/compras-online-kJOI-U1601835431030PgD-1248x770@Diario%20Vasco.jpg'); background-position: center;">
+		<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+			<div class="animated fadeInDown" >
+				<h1>Tu carrito</h1>
+				<p>Explora y gestiona tu carrito diseñado para ti.</p>
+			</div>
+		</div>
+	</section> -->
+	
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li>Carrito</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+
+		<div class="container margin_60">
+
+			<div class="row">
+				<aside class="col-lg-3">
+					<div id="costosCarrito">
+					</div>
+					<div id="datosFactura">
+					</div>
+					<div id="sugerencias">
+
+					</div>
+					<div class="box_style_1" id="graciasLado" style="display: none;">
+						<h3 class="inner">Importante!</h3>
+						<p>
+							Si desea realizar alguna modificación en su reserva (como cambios de fechas, ajustes en las actividades o cualquier otro detalle), le recomendamos que se ponga en contacto con uno de nuestros asesores lo antes posible para garantizar que podamos asistirle de manera efectiva.
+						</p>
+					</div>
+					<!--End filters col-->
+					<div class="box_style_2">
+						<i class="icon_set_1_icon-57"></i>
+						<h4>¿Necesita <span>Ayuda?</span></h4>
+						<a href="tel://004542344599" class="phone">+45 423 445 99</a>
+						<small>Te ayudamos con tu reserva</small>
+					</div>
+					
+				</aside>
+				<!--End aside -->
+				<div class="col-lg-9">
+
+					<div id="listaActividaes">
+						
+					</div>
+					<div id="listaTransfers">
+						
+					</div>
+					<div id="listaHoteles">
+						
+					</div>
+					<div id="agradecimiento" style="display: none;">
+
+					</div>
+
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+
+		<script src="/js/modulos/carrito/carrito.js"></script>
+		<script src="/js/modulos/carrito/carritoDetalles.js"></script>
+		<script src="/js/modulos/carrito/carritoResumen.js"></script>
+		<script src="/js/modulos/carrito/carritoFinal.js"></script>
+		<script src="/js/modulos/comun.js"></script>
+		<script src="/js/modulos/hoteles/comunHoteles.js"></script>
+		<script src="/js/modulos/index.js"></script>
+
+
+<script>
+
+	$(document).ready(e => {
+		scrollTop()
+		editarHeaderCarrito()
+		verificarCarritos()
+
+		
+	})
+	
+</script>
+	

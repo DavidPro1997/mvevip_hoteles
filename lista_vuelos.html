@@ -1,0 +1,297 @@
+
+	<div id="search_container_2" style="background-image: url('img/headers/vuelos.jpg'); background-position: center;">
+        <div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+			<div class="animated fadeInDown">
+				<div id="search_2" style="background-color: transparent; background: none;  display: flex; align-items: center; justify-content: center;">
+            	 	<div class="tab-content">
+                		<div class="tab-pane fade active show" id="vuelos">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label><i class="icon-airport" style="transform: rotate(45deg); display: inline-block; font-size: 22px;"></i>Salida</label>
+										<div class="dropdown" style="width: 100%;">
+											<input type="text" id="salida" placeholder="Escriba una ciudad de su preferencia..." class="form-control dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off" data-bs-display="static" oninput="buscadorDestinosVuelos(event,0)"  onfocus="this.nextElementSibling.classList.add('show')" style="text-align: center; font-size: 18px;">
+											<div class="dropdown-menu" style="width: 100%; max-height: 50vh; overflow-y: auto;" id="dropdownSalida">
+												<div id="spinnerContenidoVuelos" style="text-align: center; display: none;">                
+													<div class="spinner-border avatar-lg m-2" role="status" style="color: #99c21c;"></div>
+												</div>
+												<div id="buscadorContenidoVuelos" style="display: block;">
+													<div>
+														<h6 class="dropdown-header" style="font-size: 16px; color: #99c21c;" id="tituloSalida">
+															<i class="fas fa-building"></i>
+															Principales Ciudades</h6>
+														<div class="row" id="listaDestinos">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label><i class="icon-airport" style="transform: rotate(135deg); display: inline-block; font-size: 22px;"></i>Destino</label>
+										<input type="text" id="destino" placeholder="Escriba una ciudad de su preferencia..." class="form-control dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off" data-bs-display="static" oninput="buscadorDestinosVuelos(event,1)"  onfocus="this.nextElementSibling.classList.add('show')" style="text-align: center; font-size: 18px;">
+										<div class="dropdown-menu" style="width: 100%; max-height: 50vh; overflow-y: auto;" id="dropdownDestino">
+											<div id="spinnerContenidoVuelos_d" style="text-align: center; display: none;">                
+												<div class="spinner-border avatar-lg m-2" role="status" style="color: #99c21c;"></div>
+											</div>
+											<div id="buscadorContenidoVuelos_d" style="display: block;">
+												<div>
+													<h6 class="dropdown-header" style="font-size: 16px; color: #99c21c;" id="tituloDestino">
+														<i class="fas fa-building"></i>
+														Principales Ciudades</h6>
+													<div class="row" id="listaDestinos_d">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label><i class="icon-switch" style="font-size: 22px;"></i>Tipo de vuelo</label>
+										<select class="form-select" id="tipo" style="text-align: center; font-size: 18px;">
+											<option value="ida_vuelta" selected style="font-size: 16px;">IDA Y VUELTA</option>
+											<option value="ida">SOLO IDA</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label><i class="icon-group" style="font-size: 22px;"></i>Clase</label>
+										<select class="form-select" id="claseVuelo" style="text-align: center; font-size: 18px;">
+											<option value="0" selected style="font-size: 16px;">CLASE TURISTA O ECONÓMICA</option>
+											<option value="1" style="font-size: 16px;">CLASE PREMIUM</option>
+											<option value="2" style="font-size: 16px;">CLASE EJECUTIVA O BUSINESS</option>
+											<option value="3" style="font-size: 16px;">PRIMERA CLASE</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<!-- End row -->
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label><i class="icon-calendar-7" style="font-size: 22px;"></i> Fecha Salida</label>
+										<input type="text" id="salida-datepicker" class="form-control" placeholder="Fecha de salida" autocomplete="off" onchange="establecerRegreso()" style="background-color: white; text-align: center; font-size: 18px;">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label><i class="icon-calendar-7" style="font-size: 22px;"></i> Fecha retorno</label>
+										<input type="text" id="retorno-datepicker" class="form-control" placeholder="Fecha de regreso" autocomplete="off" readonly style="background-color: white; text-align: center; font-size: 18px;">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label><i class="icon-group" style="font-size: 22px;"></i>Personas</label>
+										<div class="dropdown" style="width: 100%; position: relative; overflow: visible;"  id="dropdownPersonas">
+											<input type="text" id="personas" name="firstname_booking" id="autocomplete" placeholder="1 PERSONA" class="form-control dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off" data-bs-display="static" style="font-size: 16px; text-align: center; background-color: white;" readonly  onfocus="this.nextElementSibling.classList.add('show')">
+											<div class="dropdown-menu" style="width: 100%; max-height: 50vh; overflow-y: auto; overflow: visible;" id="dropdownPersonasContent">
+												<div class="row" style="margin-left: 15px; margin-right: 5px; align-items: center;">
+													<div class="col-lg-6 col-sm-12">
+														<span>Adultos</span>
+														<input type="number" value="1" id="numeroAdulto" class="form-control" min="1" max="10" style="width: 70%; font-size: 18px; text-align: center;" oninput="validarRango(this)">
+													</div>
+													<div class="col-lg-6 col-sm-12">
+														<span>Niños <span style="font-size: 10px;">2-11 años</span></span>
+														<input type="number" value="0" id="numeroNino" class="form-control" min="0" max="10" style="width: 70%; font-size: 18px; text-align: center;"  oninput="validarRango(this)">
+													</div>
+													<div class="col-lg-6 col-sm-12">
+														<span>Bebes <span style="font-size: 10px;">0-2 años</span></span>
+														<input type="number" value="0" id="numeroBebe" class="form-control" min="0" max="10" style="width: 70%; font-size: 18px; text-align: center;"  oninput="validarRango(this)">
+													</div>
+													<div class="col-lg-6 col-sm-12">
+														<span>3era Edad</span>
+														<input type="number" value="0" id="terceraEdad" class="form-control" min="0" max="10" style="width: 70%; font-size: 18px; text-align: center;"  oninput="validarRango(this)">
+													</div>
+													<div class="col-lg-6 col-sm-12">
+														<span>Discapacitados</span>
+														<input type="number" value="0" id="discapacitados" class="form-control" min="0" max="10" style="width: 70%; font-size: 18px; text-align: center;"  oninput="validarRango(this)">
+													</div>
+													<div class="row mt-4" style="display: flex; align-items: center; justify-content: center;">
+														<div class="col-lg-6 col-sm-12">
+															<button class="btn_1 green" style="background-color: #99c21c;" onclick="cargarPersonas()"><i class="icon-search"></i>Guardar</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End row -->
+							<hr>
+							<button class="btn_1 green" style="background-color: #99c21c;" onclick="validarDatosVuelos()"><i class="icon-search"></i>Buscar ahora</button>
+                		</div>
+            		</div>
+				</div>
+			</div>
+			<div class="animated fadeInDown" style="position: absolute; bottom: 0; left: 20px; padding: 20px; color: white;">
+				<button class="btn_1 green" style="background-color: #838881; display: flex; align-items: center; justify-content: center;" onclick="goBack()">
+					<i class="icon-right" style="font-size: 20px;"></i>
+					Regresar
+				</button>	
+			</div>
+		</div>
+    </div>
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li>Lista vuelos</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+		
+		<div style="margin: 100px;">
+
+			<div class="main_title">
+				<h2>Tus <span>Vuelos </span></h2>
+				<p>
+					Consulta completada: a continuación se muestran los detalles de tus vuelos.
+				</p>
+			</div>
+			
+			<div class="row">
+				<aside class="col-lg-3">
+					
+					<div class="mb-3" id="filters_col">
+						<div class="row">
+							<div class="col-6">
+								<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters" id="filters_col_bt">
+									<i class="icon_set_1_icon-65"></i>Filtros
+								</a>
+								
+							</div>
+							<div class="col-1 d-flex justify-content-center align-items-center">
+								<div style="border-left: 2px solid #ddd; height: 15px;"></div>
+							  </div>
+							<div class="col-5">
+								<a href="#" onclick="quitarFiltro(); return false;" style="align-items: end; justify-content: end; display: flex;">
+									<i class="icon_set_1_icon-67" style="font-size: 20px;"></i>
+								</a>
+							</div>
+						</div>
+						
+						
+						<div class="collapse show" id="collapseFilters">
+							<div class="filter_type">
+								<h6>Precios</h6>
+								<input type="text" id="range" name="range" value="">
+							</div>
+							
+							
+							<div class="filter_type">
+								<h6>Aereolinas</h6>
+								<ul id="listaAereolinas">
+									
+								</ul>
+							</div>
+							<div class="filter_type mb-3">
+								<h6>Escalas</h6>
+								<ul id="listaEscalas">
+                                    
+								</ul>
+							</div>
+
+							<div class="row mt-4">
+								<div class="col-12" style="align-items: center; display: flex; justify-content: center;">
+									<button class="btn_1 green" style="background-color: #99c21c;" onclick="filtrar()"><i class="icon-search"></i>Filtrar</button>
+								</div>
+							</div> 
+							
+						</div>
+						<!--End collapse -->
+					</div>
+					<br>
+					
+					<div class="row mb-3">
+						<div class="box_style_2 d-none d-sm-block">
+							<span class="tape"></span>
+							<div class="border p-3 mt-4 mt-lg-0 rounded mb-3">
+								<h4 class="header-title mb-3">Tipos de Equipaje</h4>
+								<div class="table-responsive">
+									<table class="table mb-0">
+										<tbody>
+											<tr>
+												<td><strong>Equipaje</strong></td>
+												<td><strong>Permitido</strong></td>
+												<td><strong>No permitido</strong></td>
+											</tr>
+											<tr>
+												<td style="text-align: center;">Bodega (23Kg)</td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-suitcase" style="font-size: 24px; color: #99c21c;"></td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-suitcase-off" style="font-size: 24px;"></i></td>
+											</tr>
+											<tr>
+												<td style="text-align: center;">Mano (10Kg)</td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-carry-on" style="font-size: 24px; color: #99c21c;"></i></td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-carry-on-off" style="font-size: 24px;"></i></td>
+											</tr>
+											<tr>
+												<td style="text-align: center;">Artículo Personal</td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-personal" style="font-size: 24px; color: #99c21c;"></i></td>
+												<td style="text-align: center;"><i class="mdi mdi-bag-personal-off" style="font-size: 24px;"></i></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!-- end table-responsive -->
+							</div>
+						</div>
+					</div>
+					<div class="box_style_2 d-none d-sm-block">
+						<span class="tape"></span>
+						<i class="icon_set_1_icon-57"></i>
+						<h4>¿Necesitas <span>Ayuda?</span></h4>
+						<a href="tel://+59388182490" class="phone">+59388182490</a>
+						<small>Contactanos para ayudarte con tu reserva</small>
+					</div>
+				</aside>
+
+				<div class="col-lg-9">
+					<div id="listaVuelos">
+
+					</div>
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+		<!-- End container -->
+
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/vuelos/comunVuelos.js"></script>
+	<script src="/js/modulos/vuelos/vuelos.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+	<script src="/js/modulos/vuelos/buscadorVuelos.js"></script>
+
+	
+
+	<!-- Cat nav mobile -->
+	<script src="/js/cat_nav_mobile.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+
+		$(document).ready(e => {
+            scrollTop()
+			recibirInformacion()
+			mostrarValoresDefaultVuelos(0)
+            mostrarValoresDefaultVuelos(1)
+            establecerSalida();
+			cerrarSpinner()
+        })
+
+	</script>
+
+	
+	
+</body>
+
+</html>

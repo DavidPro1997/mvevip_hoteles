@@ -1,0 +1,124 @@
+
+	<div id="cabecera">
+
+	</div>
+	<!-- End section -->
+
+	
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li>Lista Actividades</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+		
+		<div class="container margin_60">
+
+			<div class="main_title">
+				<h2>Tu <span>Destino</span></h2>
+				<p>
+					Se muestran todas las actividades disponibles en tu destino.
+				</p>
+			</div>
+			
+			<div class="row">
+				<aside class="col-lg-3">
+
+					<div id="filters_col">
+						<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters" id="filters_col_bt"><i class="icon_set_1_icon-65"></i>Filtros</a>
+						<div class="collapse show" id="collapseFilters">
+							<div class="filter_type">
+								<h6>Nombre</h6>
+								<input type="text" id="nombreActividad" placeholder="Ingrese el nombre de la actividad" class="form-control" oninput="filtrarNombreActividad(this)">
+							<br>
+							</div>
+							<div class="filter_type">
+								<h6>Precios</h6>
+								<input type="text" id="range" name="range" value="">
+							</div>
+
+							<div class="filter_type">
+								<h6>Ordenar por precio</h6>
+								<ul class="mb-0">
+                                    <li>
+                                        <label class="container_radio">
+                                             Más económico primero
+                                            <input type="radio" name="ordenarPrecioAct" value="0">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="container_radio">
+											Más costoso primero
+                                            <input type="radio" name="ordenarPrecioAct" value="1">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </li>
+								</ul>
+							</div>
+
+							<div class="filter_type">
+								<h6>Ordenar por calificación</h6>
+								<ul id="listaScore">
+									
+								</ul>
+							</div>
+							
+							<div class="row mt-4">
+								<div class="col-12" style="align-items: center; display: flex; justify-content: center;">
+									<button class="btn_1 green" style="background-color: #99c21c;" onclick="filtrarActividades()"><i class="icon-search"></i>Filtrar</button>
+								</div>
+							</div> 
+						</div>
+						<!--End collapse -->
+					</div>
+					<br>
+
+					<div class="box_style_2 d-none d-sm-block">
+						<i class="icon_set_1_icon-57"></i>
+						<h4>¿Necesitas <span>Ayuda?</span></h4>
+						<a href="tel://+59388182490" class="phone">+59388182490</a>
+						<small>Contactanos para ayudarte con tu reserva</small>
+					</div>
+				</aside>
+
+				<div class="col-lg-9">
+					<div id="hola">
+						
+					</div>
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+		<!-- End container -->
+
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/actividades/actividades.js"></script>
+	<script src="/js/modulos/actividades/comunActividades.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+	<script src="/js/modulos/actividades/buscadorActividades.js"></script>
+	
+
+	<!-- Cat nav mobile -->
+	<script src="/js/cat_nav_mobile.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+
+		$(document).ready(e => {
+            scrollTop()
+			recibirInformacion()
+        })
+	</script>
+
+	
+	
+</body>
+
+</html>

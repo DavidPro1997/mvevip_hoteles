@@ -1,0 +1,287 @@
+<section class="parallax-window" data-parallax="scroll" data-image-src="img/header_bg.jpg" data-natural-width="1400" data-natural-height="470" style="background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230220/pngtree-business-team-working-with-contract-business-team-working-with-contract-image_1643243.jpg');">
+	<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+		<div class="animated fadeInDown">
+			<h1>PLAN CONTRATADO</h1>
+			<p>Aquí encontrarás el detalle de tu plan</p>
+		</div>
+	</div>
+</section>
+
+
+<div id="position">
+	<div class="container">
+		<ul>
+			<li><a href="#">Home</a>
+			</li>
+			<li>Contratos</li>
+		</ul>
+	</div>
+</div>
+<!-- End Position -->
+
+<div class="container margin_60">
+
+	<div class="main_title">
+		<h2><span>MARKETING VIP S.A.</span> </h2>
+	</div>
+
+	<div class="row" style="display: flex; align-items: center; justify-content: center;" id="ingresoCedula">
+		<div class="col-md-6 text-center">
+			<p>Ingresa para acceder a tu contrato</p>		
+			<div class="form-group">
+				<label><i class="icon-vcard" style="display: inline-block; font-size: 22px;"></i>Cédula de Identidad</label>
+				<input type="text" class="form-control" id="cedula" name="firstname_booking" placeholder="Digita tu cédula de identidad">
+				<br>
+				<button class="btn_1 green" id="myButton" style="background-color: #99c21c;" type="button" onclick="buscarContrato()">
+					<i class="icon-search" id="icon-search"></i>
+					<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;" id="spinner"></span>
+					<span id="buttonText">
+						Buscar contrato
+					</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" id="contrato">
+		
+	</div>
+	<!-- End row -->
+	<hr>
+	
+	
+
+<script>
+
+	$(document).ready(e => {
+		recibirInformacion()
+		scrollTop()
+	})
+
+	function scrollTop() {
+		window.scrollTo(0, 0);
+	}
+
+
+
+	function botonBuscarCargando() {
+		document.getElementById('spinner').style.display = 'inline-block'
+		document.getElementById('buttonText').textContent = 'Loading...'
+		document.getElementById('icon-search').style.display = 'none'
+
+	}
+
+	function botonBuscarCargado() {
+		// document.getElementById('icon-search').style.display = 'block';
+		document.getElementById('spinner').style.display = 'none'; // Ocultar el spinner
+		document.getElementById('buttonText').textContent = 'Buscar contrato';
+	}
+
+
+
+	function recibirInformacion(){
+		const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+        const cedula = urlParams.get('cedula');
+        if (cedula) {
+            // Decodificar y parsear el objeto personas
+            const cedulaDecoded = decodeURIComponent(cedula);
+            const cedulaObj = JSON.parse(cedulaDecoded);
+            console.log(cedulaObj)
+			$("#ingresoCedula").hide()
+            buscarContrato(cedulaObj)
+            
+        } 
+        else {
+			$("#ingresoCedula").show()
+            console.log ('Datos de contrato no especificados');
+        }
+	}
+
+
+
+
+	function buscarContrato(id){
+		botonBuscarCargando()
+		let cedula
+		if(id){
+			cedula = id
+		}else{
+			cedula = document.getElementById("cedula").value
+		}
+		console.log(cedula)
+        Obtener_API(null, 'servicios/contrato/'+cedula, datos => {
+            if (datos.estado){
+				botonBuscarCargado()
+               mostrarContrato(datos.consulta)
+            }else{
+				botonBuscarCargado()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: datos.error
+                })
+            }
+        })
+    }
+
+	function descargarContrato(id){
+		$("#descargando").show()
+        Obtener_API(null, 'servicios/contrato-descarga/'+id, datos => {
+            if (datos.estado){
+				$("#descargando").hide()
+				descargarDocumento(datos.documento, id)
+            }else{
+				$("#descargando").hide()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: datos.error
+                })
+            }
+        })
+    }
+
+
+
+	function descargarDocumento(documento, idContrato){
+		var pdfBase64 = documento;
+		var binaryData = atob(pdfBase64);
+		var arrayBuffer = new ArrayBuffer(binaryData.length);
+		var uint8Array = new Uint8Array(arrayBuffer);
+		for (var i = 0; i < binaryData.length; i++) {
+			uint8Array[i] = binaryData.charCodeAt(i);
+		}
+		var blob = new Blob([uint8Array], { type: 'application/pdf' });
+
+		// Crear un enlace temporal y simular clic para descargar
+		var a = document.createElement('a');
+		a.href = window.URL.createObjectURL(blob);
+		a.download = 'contrato_' + idContrato + '.pdf';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	}
+
+
+
+	function mostrarContrato(datos){
+		let lista = ""
+		lista += `
+			<div class="col-lg-12 wow fadeIn" data-wow-delay="0.1s" >
+				<div class="feature" style="background-size: cover; background-position: center; background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 1)), url(`+datos.imagenes.original+`);">
+					<i class="icon_set_1_icon-17"></i>
+					<strong><h3>Resumen de Contrato de servicios y beneficios</h3></strong>
+					<br>
+					<p>
+						CONTRATO de Servicios de EXCLUSIVIDAD VACACIONAL, que celebran la <strong>COMPAÑIA
+						TURISTICA "MARKETING VIP S.A" COMTUMARK</strong> y el/la Sr(a). <strong>`+datos.cliente.nombresCompletos+`</strong>:			
+					</p>
+					<br>
+					<div class="row">
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Cliente</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>`+datos.cliente.nombresCompletos+`</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Número de documento cliente</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>`+datos.cliente.documento+`</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Operadora Turística</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>COMPAÑIA TURISTICA "MARKETING VIP S.A" COMTUMARK</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>RUC Operadora Turística</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>1792554144001</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>ID de Paquete</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>`+datos.id_registro+`</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Cantidad Personas</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>`+datos.contrato.pax+` Persona(s)</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>¿Que incluye?</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<ul class="list_ok">`
+								datos.contrato.destino.forEach(element => {
+									lista += `<li>`+element+`</li>`
+								});
+								if(datos.contrato.incluyeAuto){
+									lista += `<li>Automovil</li>`
+								}
+								lista +=`
+								<li>`+datos.contrato.dias+` dias y `+datos.contrato.noches+` noches</li>
+							</ul>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Valor Total</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>$`+(datos.contrato.valorPaquete).toFixed(2)+`</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Saldo Abonado</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p>$`+(datos.contrato.abono).toFixed(2)+`</p>
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Saldo Pendiente</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">`
+							if(!parseFloat(datos.contrato.pendiente)>0){
+								lista += `<p>No tiene valores pendientes</p>`
+							}else{
+								lista += `<p>$`+(datos.contrato.pendiente).toFixed(2)+` <strong><a href="#" style="color: red; text-decoration: underline;">Pagar aquí</a></p></strong>`
+							}
+							lista +=`
+						</div>
+						<div class="col-lg-5 col-sm-12">
+							<p><strong>Vigencia</strong></p>
+						</div>
+						<div class="col-lg-7 col-sm-12">
+							<p><strong>Del</strong> `+datos.fechaVenta+` <strong>al</strong> `+datos.fechaCaducidad+`</p>
+						</div>
+						<hr>
+						<div class="col-12">
+							<p><strong>Importante:</strong> El proceso de reserva solo podrá iniciarse una vez que se haya realizado el pago total del contrato. <strong>Recuerde:</strong> Sin la liquidación completa, no podremos garantizar ni procesar su solicitud de reserva. ¡Complete su pago cuanto antes para asegurar su lugar!</p>
+						</div>
+						<hr>
+						<div class="col-12" style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+							<button class="btn_1 green" style="background-color: #99c21c; align-items: center; justify-content: center; display: flex;" onclick="descargarContrato(`+datos.id_registro+`)">
+								<div class="spinner-border spinner-border-sm m-2" role="status" id="descargando" style="display: none;">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+								Descargar contrato
+							</button>
+						</div>
+						
+					</div>
+					
+				</div>
+			</div>
+		`
+		$("#contrato").html(lista)
+	}
+
+	
+
+
+</script>
+	

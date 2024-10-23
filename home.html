@@ -1,0 +1,437 @@
+<style>
+    
+    /* Estilo para simular el estado deshabilitado */
+    .ddslick-disabled {
+        pointer-events: none; /* Desactiva eventos de clic */
+        opacity: 0.7; /* Reduce la opacidad para mostrar que está deshabilitado */
+    }
+
+    .video-background {
+        position: absolute; /* O relative si prefieres */
+        width: 100%;
+        height: 100vh; /* O ajusta según necesites */
+        overflow: hidden;
+        z-index: -1; /* Asegura que el video esté detrás del contenido */
+    }
+
+    .video-background iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        object-fit: cover;
+        transform: translate(0px, 0px) scale(1.2);
+
+    }
+
+    .message-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+        z-index: -10;
+    }
+
+    .main-content {
+        position: relative; /* Asegura que esté sobre el video */
+        z-index: 2; /* Asegura que el contenido esté por encima del video */
+        padding: 20px;
+    }
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6); /* Ajusta la opacidad aquí */
+        pointer-events: none; /* Esto asegura que la capa no interfiera con la interacción del video */
+    }
+
+    #hero_video {
+        position: relative;
+        width: 100%;
+        height: 100vh; /* Ajusta la altura según sea necesario */
+        overflow: visible;
+        padding-bottom: 60px; /* Espacio adicional debajo del video */
+    }
+
+    @media (max-width: 768px) {
+        #hero_video {
+            height: 120vh; /* Ajusta la altura para pantallas más pequeñas */
+            padding-bottom: 30px; /* Ajusta el padding según sea necesario */
+        }
+
+        .container {
+            padding-top: 30px; /* Espacio para el contenido debajo del video en dispositivos móviles */
+        }
+    }
+
+</style>
+
+
+<section>
+    <div id="hero_video">
+        <div class="video-background">
+            <iframe 
+                    src="https://www.youtube.com/embed/mXhjNww-eRQ?autoplay=1&mute=1&loop=1&playlist=mXhjNww-eRQ" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+        <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+            <div class="intro_title" style="z-index: 9999;">    
+                <div id="search_container" style="z-index: 9999; background-image: none; background-color: transparent;">                   
+                    <div id="search" style="background-color: transparent;">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#hotels" data-bs-toggle="tab" class="active show"><i class="icon-commerical-building"></i>Hoteles</a></li>
+                        </ul>
+                        <div class="tab-content" style="background-color: rgba(255, 255, 255, 0.8);">
+                            <div class="tab-pane active show" id="hotels">
+                                <h3>Encuentra tu hotel ideal</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="icon-airport" style="font-size: 22px;"></i> Destino</label>
+                                            <input type="text" id="destinoHotel" placeholder="Escriba una ciudad de su preferencia..." class="form-control dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off" data-bs-display="static" oninput="buscadorDestinosHotel(event,1)"  onfocus="this.nextElementSibling.classList.add('show')" style="font-size: 16px; text-align: center;">
+                                            <div class="dropdown-menu" style="width: 100%; max-height: 50vh; overflow-y: auto;" id="dropdownHoteles">
+                                                <div id="spinnerContenidoHotel" style="text-align: center; display: none;">                
+                                                    <div class="spinner-border avatar-lg m-2" role="status" style="color: #99c21c;"></div>
+                                                </div>
+                                                <div id="buscadorContenidoHotel" style="display: block;">
+                                                    <div>
+                                                        <h6 class="dropdown-header" style="font-size: 20px; color: #99c21c;">
+                                                            <i class="fas fa-building"></i>
+                                                            Destinos</h6>
+                                                        <div class="row" id="listaDestinosHoteles">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                        
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="icon-group" style="font-size: 22px;"></i>Personas</label>
+                                            <div class="dropdown" style="width: 100%; position: relative; overflow: visible;"  id="dropdownPersonas">
+                                                <input type="text" id="personasHoteles" name="firstname_booking" id="autocomplete" placeholder="👤 2 PERSONAS y 🏠 1 HABITACIÓN" class="form-control dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off" data-bs-display="static" style="font-size: 16px; text-align: center; background-color: white;" readonly  onfocus="this.nextElementSibling.classList.add('show')">
+                                                <div class="dropdown-menu" style="width: 100%; max-height: 50vh; overflow-y: auto;" id="dropdownPersonasHoteles">
+                                                    <div class="row mb-3">
+                                                        <div class="col-12 justify-content-between align-items-center" style="display: flex; margin-left: 15px;">
+                                                            <strong><span style="font-size: 15px; color: #99c21c;">Añade mas habitaciones</span></strong> 
+                                                            <button type="button" class="btn" style="background-color: #99c21c; margin-right:20px" onclick="agregarHabitacion();  event.stopPropagation();">
+                                                                <i class="fas fa-plus" style="color: white;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div  class="d-flex justify-content-between align-items-center">
+                                                        <h6 class="dropdown-header" style="font-size: 16px; color: black;">
+                                                            <i class="fas fa-building"></i>
+                                                            Habitación 1
+                                                        </h6>
+                                                    </div>
+                                                    <div class="row" style="margin-left: 15px; margin-right: 5px; align-items: center;">
+                                                        <div class="col-lg-6 col-sm-12">
+                                                            <span>Adultos</span>
+                                                            <input type="number" value="2" min="1" max="8" id="numeroAdulto0" class="form-control" style="font-size: 18px; text-align: center; width: 50%;"  onchange="actualizarPersonas(0,0);" oninput="validarRango(this)">
+                                                        </div>
+                                                        <div class="col-lg-6 col-sm-12">
+                                                            <span>Niños <span style="font-size: 10px;">2-11 años</span></span>
+                                                            <input type="number" value="0" min="0" max="4" id="numeroNino0" class="form-control" style="font-size: 18px; text-align: center; width: 50%;"  onchange="actualizarPersonas(1,0);" oninput="validarRango(this)">
+                                                        </div>
+                                                        <div class="col-lg-12 col-sm-12" style="display: none;" id="edadesNinos_0">
+                                                            <span>Edad niños</span>
+                                                            <div class="row">
+                                                                <div class="col-3" style="display: flex; align-items: center; display: none;" id="ninoC_0_0">
+                                                                    <input type="number" value="2" min="2" max="11" id="nino_0_0" class="form-control" style="font-size: 18px; text-align: center;" onchange="actualizarEdad(0,0)" oninput="validarRango(this)">
+                                                                    <small style="margin-left: 15px; font-size: 12px;">años</small>
+                                                                </div>
+                                                                <div class="col-3" style="display: flex; align-items: center; display: none;" id="ninoC_0_1">
+                                                                    <input type="number" value="2" min="2" max="11" id="nino_0_1" class="form-control" style="font-size: 18px; text-align: center;" onchange="actualizarEdad(0,1)" oninput="validarRango(this)">
+                                                                    <small style="margin-left: 15px; font-size: 12px;">años</small>
+                                                                </div>
+                                                                <div class="col-3" style="display: flex; align-items: center; display: none;" id="ninoC_0_2">
+                                                                    <input type="number" value="2" min="2" max="11" id="nino_0_2" class="form-control" style="font-size: 18px; text-align: center;" onchange="actualizarEdad(0,2)" oninput="validarRango(this)">
+                                                                    <small style="margin-left: 15px; font-size: 12px;">años</small>
+                                                                </div>
+                                                                <div class="col-3" style="display: flex; align-items: center; display: none;" id="ninoC_0_3">
+                                                                    <input type="number" value="2" min="2" max="11" id="nino_0_3" class="form-control" style="font-size: 18px; text-align: center;" onchange="actualizarEdad(0,3)" oninput="validarRango(this)">
+                                                                    <small style="margin-left: 15px; font-size: 12px;">años</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="habitaciones" ></div>
+                                                    <div class="row mt-4">
+                                                        <div class="col-lg-12 col-sm-12" style="display: flex; align-items: center; justify-content: center;">
+                                                            <button class="btn_1 green" style="background-color: #99c21c;" onclick="cargarPersonasHoteles()"><i class="icon-search"></i>Guardar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="icon-calendar-7"></i> Check in</label>
+                                            <input class="date-pick form-control" type="text" id="chekInHotel" placeholder="Fecha de llegada" autocomplete="off" onchange="establecerRegresoHotel()" style="font-size: 16px; text-align: center; background-color: white;">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="icon-calendar-7"></i> Check out</label>
+                                            <input class="date-pick form-control" type="text" id="chekOutHotel" placeholder="Fecha de llegada" autocomplete="off" readonly style="font-size: 18px; text-align: center; background-color: white;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+                                <button class="btn_1 green" style="background-color: #99c21c;" onclick="buscarHoteles()"><i class="icon-search"></i>Buscar ahora</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>  
+    
+   
+    <div class="container margin_60">
+        <div class="main_title">
+            <h2>Nuestro<span> Catálogo</span></h2>
+            <p>Explora nuestro catálogo exclusivo de tours diseñado especialmente para ti.</p>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.1s">
+                <div class="tour_container">
+					<div class="ribbon_3 popular"><span>Popular</span></div>
+                    <div class="img_container">
+                        <a href="/listaCatalogosTours">
+                            <img src="https://images.ctfassets.net/cfexf643femz/7ffmw1z22uDIYLvOwPWKvc/d7cdd973106b745b58904dd19a36d687/razones-invertir-cartagena-colombia.jpg" class="img-fluid" alt="Image" style="width: 100%; height: 250px;">
+                            <div class="short_info">
+                                <span class="price"><sup>$</sup>29</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="tour_title">
+                        <h3><strong>Cartagena + Panama</strong></h3>
+                        <div class="rating">
+                            <i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile"></i><small>(75)</small>
+                        </div><!-- end rating -->
+                    </div>
+                </div><!-- End box tour -->
+            </div><!-- End col -->
+            
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.2s">
+                <div class="tour_container">
+					<div class="ribbon_3 popular"><span>Popular</span></div>
+                    <div class="img_container">
+                        <a href="/listaCatalogosTours">
+                            <img src="https://skytravel.com.ec/media/galeria/CTG%20MAS%20PTY%203.png" width="800" height="533" class="img-fluid" alt="Image" style="width: 100%; height: 250px;">
+                            <div class="short_info">
+                                <span class="price"><sup>$</sup>29</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="tour_title">
+                        <h3><strong>Multidestino</strong></h3>
+                        <div class="rating">
+                            <i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile"></i><small>(75)</small>
+                        </div>
+                    </div>
+                </div><!-- End box tour -->
+            </div><!-- End col -->
+            
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                <div class="tour_container">
+					<div class="ribbon_3 popular"><span>Popular</span></div>
+                    <div class="img_container">
+                        <a href="/listaCatalogosTours">
+                            <img src="https://wsvn.com/wp-content/uploads/sites/2/2018/04/universal-orlando_1487344376449_9016381_ver1-0_1280_720.jpg?quality=60&strip=color&w=1024" width="800" height="533" class="img-fluid" alt="Image" style="width: 100%; height: 250px;">
+                            <div class="short_info">
+                                <span class="price"><sup>$</sup>29</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="tour_title">
+                        <h3><strong>Miami + Orlando</strong> Florida</h3>
+                        <div class="rating">
+                            <i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile voted"></i><i class="icon-smile"></i><small>(75)</small>
+                        </div>
+                    </div>
+                </div><!-- End box tour -->
+            </div><!-- End col -->
+            
+            <p class="text-center nopadding">
+                <a href="/listaCatalogos" class="btn_1 medium" style="background-color: #99c21c; color: white;"><i class="icon-eye-7"></i>Ver catálogos</a>
+            </p>
+
+        </div><!-- End row -->
+
+
+    </div><!-- End container -->
+    
+    <div class="white_bg">
+        <div class="container margin_60">
+            
+            <div class="banner colored">
+                <h4>¿Porque viajar con <span>nosotros?</span></h4>
+                <div class="row">
+                    <div class="col-10">
+                        <p class="mt-3" style="font-size: 18px;">
+                            En nuestra agencia de viajes, te ofrecemos total seguridad y transparencia. Contamos con licencias oficiales, precios claros sin sorpresas, atención y seguimiento 24/7 y trabajamos solo con proveedores de confianza. Además, nuestras políticas flexibles te brindan tranquilidad para hacer cambios fácilmente.					
+                        </p>
+                    </div>
+                    <div class="col-2">
+                        <a href="/about" class="btn_1 white">Read more</a>
+                    </div>
+                </div>
+                
+               <br>
+            </div>
+            
+            <div class="row">
+
+                <div class="main_title">
+                    <h2>Otros Servicios <span>Populares</span></h2>
+                    <p>
+                        Tambien ofrecemos servicios adicionales para una experiencia de viaje sin contratiempos, incluyendo asesoría experta y opciones de seguro y transporte personalizado.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <p>
+                        <a href="/mantenimiento"><img src="https://www.ecuavisa.com/binrepository/850x600/12c0/825d600/none/11705/ATLA/whatsapp-image-2023-10-26-at-15-54_1209655_20231026155535.jpg" alt="Pic" class="img-fluid rounded"></a>
+                    </p>
+                    <h4>Visa de <span>Schengen</span></h4>
+                    <p>Lorem ipsum dolor sit amet, vix erat audiam ei. Cum doctus civibus efficiantur in.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <p>
+                        <a href="/mantenimiento"><img src="https://www.vistazo.com/binrepository/768x518/0c43/768d432/none/12727/VVDD/visa-mexico_1133094_20230907155102.jpg" alt="Pic" class="img-fluid rounded"></a>
+                    </p>
+                    <h4>Visa de<span> Mexico</span></h4>
+                    <p>Lorem ipsum dolor sit amet, vix erat audiam ei. Cum doctus civibus efficiantur in.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <p>
+                        <a href="#"><img src="https://cdn.logitravel.com/wsimgresize/resize/crop/750/470///cdn.logitravel.com/microsites/logicms/images/campaigns/201805/cam_agosto.jpg?jpegQuality=97" alt="Pic" class="img-fluid rounded"></a>
+                    </p>
+                    <h4>Ofertas<span> Vacacionales </span></h4>
+                    <p>Lorem ipsum dolor sit amet, vix erat audiam ei. Cum doctus civibus efficiantur in.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <p>
+                        <a href="#"><img src="https://blog.turismomaso.com/wp-content/uploads/2021/09/Agente-de-Viajes.jpg" alt="Pic" class="img-fluid rounded"></a>
+                    </p>
+                    <h4><span>Asesoramiento</span></h4>
+                    <p>Lorem ipsum dolor sit amet, vix erat audiam ei. Cum doctus civibus efficiantur in.</p>
+                </div>
+            </div>
+            <!-- End row -->
+            
+        </div>
+        <!-- End container -->
+    </div>
+		<!-- End white_bg -->
+
+    <section class="promo_full">
+        <div class="promo_full_wp magnific">
+            <div>
+                <h3>CONOCE MAS SOBRE NOSOTROS</h3>
+                <p>
+                    Descubre quiénes somos y por qué somos tu mejor opción en viajes. En nuestro video, te mostramos nuestra pasión por crear experiencias únicas y personalizadas, respaldadas por años de experiencia y un compromiso inquebrantable con tu satisfacción. Conoce nuestro equipo, nuestras historias de éxito y cómo transformamos cada viaje en una experiencia inolvidable. ¡Haz clic para ver el video y déjate inspirar!					</p>
+                <a href="https://www.youtube.com/watch?v=xCBQn-PxhI0" class="video"><i class="icon-play-circled2-1"></i></a>
+            </div>
+        </div>
+    </section>
+		<!-- End section -->
+
+    <div class="container margin_60">
+
+        <div class="main_title">
+            <h2>Motivos <span>Claves</span> para elegirnos</h2>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.2s">
+                <div class="feature_home">
+                    <i class="icon_set_1_icon-41"></i>
+                    <h3><span>+40</span> Destinos</h3>
+                    <p>
+                        Ofrecemos más de 40 destinos alrededor del mundo, brindándote opciones para cada tipo de aventura. Desde escapadas relajantes hasta emocionantes...						
+                    </p>
+                    <a href="/about" class="btn_1 outline">Read more</a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.4s">
+                <div class="feature_home">
+                    <i class="icon_set_1_icon-30"></i>
+                    <h3><span>+ 100000</span> Viajeros</h3>
+                    <p>
+                        Con la confianza de más de 100,000 viajeros, nos destacamos por ofrecer experiencias personalizadas que superan expectativas. Nuestra dedicación...						
+                    </p>
+                    <a href="/about" class="btn_1 outline">Read more</a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s">
+                <div class="feature_home">
+                    <i class="icon_set_1_icon-57"></i>
+                    <h3><span>Soporte </span>24/7</h3>
+                    <p>
+                        Contamos con soporte 24/7 para garantizar que tu experiencia de viaje sea perfecta en todo momento. Nuestro equipo de expertos está siempre...					
+                    </p>
+                    <a href="/about" class="btn_1 outline">Read more</a>
+                </div>
+            </div>
+
+        </div>
+        <!--End row -->
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <img src="img/logo.png" style="width: 100%;" class="img-fluid laptop">
+            </div>
+            <div class="col-md-6">
+                <h3><span>Empieza hoy</span> con Marketing Vip</h3>
+                <p>
+                    Te brindamos facilidades para que inicies hoy mismo.
+                </p>
+                <ul class="list_order">
+                    <li><span>1</span>Selecciona tu destino</li>
+                    <li><span>2</span>Compra tus tickets aereos, hoteles, actividades o traslados</li>
+                    <li><span>3</span>Tus reservas llegaran a tu correo y los asesores se comunicaran para brindarte seguimiento</li>
+                </ul>
+                <a href="/mantenimiento" class="btn_1" style="background-color: #99c21c;">Iniciar ahora</a>
+            </div>
+        </div>
+        <!-- End row -->
+    
+    </div>
+    <script src="/js/functions.js"></script>
+    <script src="/js/modulos/hoteles/buscadorHoteles.js"></script>
+    <script src="/js/modulos/comun.js"></script>
+
+    <script>
+
+
+        $(document).ready(e => {
+            cerrarSpinner()
+            scrollTop()
+            mostrarValoresDefaultHoteles()
+            establecerSalidaHoteles();
+        })
+
+
+	</script>
+    

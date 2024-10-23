@@ -1,0 +1,250 @@
+<section class="parallax-window" data-parallax="scroll" data-image-src="img/header_bg.jpg" data-natural-width="1400" data-natural-height="470" style="background-image: url('https://www.eleconomista.com.mx/__export/1583958364986/sites/eleconomista/img/2020/03/11/dolares_crop1565809867443_crop1566505847346_crop1583958364277.jpg_551917905.jpg');">
+    <div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+        <div class="animated fadeInDown">
+            <h1>CAMBIO DE MONEDA</h1>
+            
+        </div>
+    </div>
+</section>
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li>Moneda</li>
+				</ul>
+			</div>
+		</div>
+		<!-- End Position -->
+
+		<div class="container margin_60">
+			<div class="main_title">
+				<h2><span>CONVERTIDOR </span>DE MONEDA</h2>
+				<p>
+                    Aquí puede realizar la conversión de su moneda.				
+                </p>
+			</div>
+			<hr>
+			<div class="row" style="display: flex; align-items: center; justify-content: center;">
+                <div class="col-3">
+                    <div class="form-group">
+                        <label class="select-label">De</label>
+                        <div class="styled-select-common">
+                            <select onchange="calcularMoneda('de')" id="de">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2" style="display: flex; align-items: center; justify-content: center; flex-direction: column;"> 
+                    <i class="fas fa-arrow-right" style="font-size: 22px; color: #99c21c;"></i>
+                    <!-- <i class="fas fa-arrow-left" style="font-size: 18px; color: #99c21c;"></i> -->
+                </div>
+                <div class="col-3" >
+                    <div class="form-group">
+                        <label class="select-label">A</label>
+                        <div class="styled-select-common">
+                            <select onchange="calcularMoneda('a')" id="a">
+                               
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3" style="display: flex; align-items: center; justify-content: center;">
+                <div class="col-2">
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="text" value="0" id="cantidad_de" class="form-control" name="quantity" style="width: 100%;" oninput="validarEntrada(this)">
+                    </div>
+                </div>
+                <div class="col-1" style="display: flex; align-items: center;">
+                    <strong id="de_label"></strong>
+                </div>
+    
+                <div class="col-2" style="display: flex; align-items: center; justify-content: center; flex-direction: column;"> 
+                    <i class="fas fa-arrow-right" style="font-size: 22px; color: #99c21c;"></i>
+                    <!-- <i class="fas fa-arrow-left" style="font-size: 18px; color: #99c21c;"></i> -->
+                </div>
+                <div class="col-2">
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="text" value="0" id="cantidad_a" class="form-control" name="quantity" style="width: 100%;" readonly>
+                    </div>
+                </div>
+                <div class="col-1" style="display: flex; align-items: center;">
+                    <strong id="a_label"></strong>
+                </div>
+            </div>
+            <div class="row mt-4"  style="display: flex; align-items: center; justify-content: center;">
+                <div class="col-2">
+                    <button class="btn_1 green" style="background-color: #99c21c;" onclick="convertirMoneda()"><i class="icon-search"></i>Convertir</button>
+                </div>
+            </div>
+		</div>
+		<!-- End container -->
+
+
+        <script>
+
+
+            $(document).ready(e => {
+                contruirSelects()
+                armarLabels()
+            })
+
+            var de = "0_USD"
+            var a = "1_EUR"
+            var monedas = [
+                {
+                    id: "0_USD",
+                    value: "Dólar estadounidense (USD)"
+                },
+                {
+                    id: "1_EUR",
+                    value: "Euro (EUR)"
+                },
+                {
+                    id: "2_MXN",
+                    value: "Peso mexicano (MXN)"
+                },
+                {
+                    id: "3_ARS",
+                    value: "Peso argentino (ARS)"
+                },
+                {
+                    id: "4_COP",
+                    value: "Peso colombiano (COP)"
+                },
+                {
+                    id: "5_UYU",
+                    value: "Peso uruguayo (UYU)"
+                },
+                {
+                    id: "6_DOP",
+                    value: "Peso dominicano (DOP)"
+                },
+                {
+                    id: "7_PEN",
+                    value: "Sol peruano (PEN)"
+                }
+            ]
+
+            function calcularMoneda(id){
+                let valor = document.getElementById(id).value
+                if(id == "de"){
+                    de = valor
+                }else if(id == "a"){
+                    a = valor
+                }
+                contruirSelects()
+                armarLabels()
+            }
+
+
+            function contruirSelects(){
+                let lista_de = ""
+                let lista_a = ""
+                monedas.forEach(element => {
+                    if(element.id != de){
+                        if(element.id == a){
+                            lista_a += `<option value="`+element.id+`" selected>`+element.value+`</option>`
+                        }else{
+                            lista_a += `<option value="`+element.id+`">`+element.value+`</option>`
+                        }
+                    }
+
+                    if(element.id != a){
+                        if(element.id == de){
+                            lista_de += `<option value="`+element.id+`" selected>`+element.value+`</option>`
+                        }else{
+                            lista_de += `<option value="`+element.id+`">`+element.value+`</option>`
+                        }
+                    }
+                });
+                $("#de").html(lista_de)
+                $("#a").html(lista_a)
+            }
+
+            function armarLabels(){
+                let label_de = `<span style="font-size: 20px;">`+de.slice(-3)+`</span>`
+                let label_a = `<span style="font-size: 20px;">`+a.slice(-3)+`</span>`
+                $("#de_label").html(label_de)
+                $("#a_label").html(label_a)
+
+            }
+
+
+
+            function convertirMoneda() {
+                let cantidad = parseFloat(document.getElementById("cantidad_de").value.replace(/,/g, '')) 
+                let moneda1 = de.slice(-3)
+                let moneda2 = a.slice(-3)
+                // Tasas de conversión ficticias respecto al USD
+                const tasas = {
+                    USD: 1,
+                    EUR: 0.85,
+                    MXN: 17.12,
+                    ARS: 350,
+                    COP: 4000,
+                    UYU: 38,
+                    DOP: 56,
+                    PEN: 3.7
+                };
+
+                // Verifica si las monedas existen en las tasas
+                if (!tasas[moneda1] || !tasas[moneda2]) {
+                    return "Moneda no válida";
+                }
+
+                // Convertir cantidad a USD primero y luego a la moneda de destino
+                let cantidadEnUSD = cantidad / tasas[moneda1];
+                let cantidadConvertida = cantidadEnUSD * tasas[moneda2];
+
+                document.getElementById("cantidad_a").value = formatearNumeroConComas(cantidadConvertida);
+                document.getElementById("cantidad_de").value = formatearNumeroConComas(cantidad)
+            }
+
+
+
+            function formatearNumeroConComas(numero) {
+                // Asegurar que el número tenga exactamente dos decimales
+                let numeroConDosDecimales = numero.toFixed(2);
+
+                // Convertir el número a una cadena
+                let cadena = numeroConDosDecimales.toString();
+
+                // Dividir en parte entera y decimal
+                let partes = cadena.split('.');
+                let parteEntera = partes[0];
+                let parteDecimal = partes[1] ? '.' + partes[1] : '';
+
+                // Agregar comas a la parte entera
+                parteEntera = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                // Unir la parte entera con la parte decimal
+                return parteEntera + parteDecimal;
+            }
+
+
+            function validarEntrada(input) {
+                // Obtener el valor actual del input
+                let valor = input.value;
+
+                // Permitir solo números y un único punto decimal
+                let partes = valor.split('.');
+                let parteEntera = partes[0].replace(/\D/g, ''); // Elimina caracteres no numéricos de la parte entera
+                let parteDecimal = partes[1] ? partes[1].replace(/\D/g, '') : ''; // Elimina caracteres no numéricos de la parte decimal
+
+                // Formatear la parte entera con comas
+                parteEntera = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                // Unir la parte entera con la parte decimal
+                input.value = parteEntera + (parteDecimal ? '.' + parteDecimal : '');
+            }
+
+           
+
+        </script>
+	

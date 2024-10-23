@@ -1,0 +1,210 @@
+<style>
+	.flatpickr-calendar {
+    left: 50% !important;  /* Centrar horizontalmente */
+    top: 50% !important;   /* Centrar verticalmente */
+    transform: translate(-50%, -50%) !important;  /* Ajusta el desplazamiento para estar perfectamente centrado */
+}
+</style>
+
+<div id="heaederActividad">
+
+</div>
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li><a href="/listaActividades">Destino</a>
+					</li>
+					<li>Detalle</li>
+				</ul>
+			</div>
+		</div>
+		<!-- End Position -->
+
+
+		<div class="collapse" id="collapseMap">
+			<div id="map" class="map"></div>
+		</div>
+		<!-- End Map -->
+
+		<div class="container margin_60">
+			<div class="row">
+				<div class="col-lg-8" id="single_tour_desc">
+					<div id="emojis"></div>
+					<div id="imagenes"></div>
+					<hr>
+					<div class="row">
+						<div class="col-lg-3">
+							<h3>Descripción</h3>
+						</div>
+						<div class="col-lg-9" id="descripcion">
+						</div>
+					</div>
+					<hr>
+					<div class="row">
+						<div class="col-lg-3">
+							<h3>Detalles</h3>
+						</div>
+						<div class="col-lg-9" id="detalles">
+						</div>
+					</div>
+					<hr>
+					<div class="row">
+						<div class="col-lg-3">
+							<button class="btn_1 green" style="background-color: #838881; display: flex; align-items: center; justify-content: center;" onclick="goBack()">
+								<i class="icon-right" style="font-size: 20px;"></i>
+								Regresar
+							</button>
+						</div>
+					</div>
+				</div>
+				<!--End  single_tour_desc-->
+
+				<aside class="col-lg-4">
+					
+					<div class="box_style_1 expose">
+						<h3 class="inner">- Reservar -</h3>
+
+
+						<div class="row mb-5">
+							<div class="col-2">
+								<button type="button" class="btn btn-light" onclick="actualizarFechas('1');">
+									<i class="icon-left-open"></i>
+								</button>
+								<span>Anterior</span>
+							</div>
+							<div class="col-8">
+								<input type="text" id="calendario" class="form-control" placeholder="Eliga un día de su preferencia" readonly style="background-color: white; text-align: center;" onchange="armarHorarioCosto()">
+							</div>
+							<div class="col-2">
+								<button type="button" class="btn btn-light" onclick="actualizarFechas('0');">
+									<i class="icon-right-open"></i>
+								</button>
+								<span>Siguiente</span>
+							</div>
+						</div>
+						<div class="row mb-5" id="horarios" style="display: none;">
+							<div class="col-12">
+								<i class="dripicons-clock" style="font-size: 20px; margin-right: 10px;"></i>
+								<span style="font-size: 18px;">
+									Horarios
+								</span><br><br>
+								<select class="form-select" id="tiempos">
+									<option value="">Eliga una fecha</option>
+								</select> 
+							</div>                            
+						</div>
+						<div class="row mb-5" id="tarifas" >
+							<div class="col-12">
+								<i class="dripicons-user-group" style="font-size: 20px; margin-right: 10px;"></i>
+								<span style="font-size: 18px;">
+									Tipo de Tarifas
+								</span><br><br>
+								<select class="form-select" id="listaTarifas" disabled onchange="armarCostos()">
+									<option value="">Eliga una tarifa</option>
+								</select> 
+							</div>                            
+						</div>
+
+						<div class="row mb-5" id="costos">
+							<div class="col-12 mb-2">
+								<i class="dripicons-card" style="font-size: 20px; margin-right: 10px;"></i>
+								<span style="font-size: 18px;">
+									Costos
+								</span>
+							</div>
+
+							<div class="col-12" id="datosCostos">
+								<span>
+									Eliga una fecha
+								</span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12" style="display: flex; align-items: center; justify-content: center;">
+								<button id="botonReservar" type="submit" class="btn" onclick="hacerReservaActividad();" style="background-color:#99c21c; color: white;">Reservar</button>
+							</div>
+						</div>
+
+					</div>
+					<!--/box_style_1 -->
+
+					<div class="box_style_4">
+						<i class="icon_set_1_icon-90"></i>
+						<h4><span>Reservar</span> por teléfono</h4>
+						<a href="tel://004542344599" class="phone">+59388182490</a>
+						<small>¿Dificultades para reservar? Llámanos y uno de nuestros asesores te asistirá personalmente para asegurar tu reserva de forma rápida y sencilla.</small>
+					</div>
+
+				</aside>
+			</div>
+			<!--End row -->
+		</div>
+		<!--End container -->
+        
+        <div id="overlay"></div>
+		<!-- Mask on input focus -->
+        
+		<!-- Common scripts -->
+	<script src="/js/jquery-3.6.0.min.js"></script>
+	<script src="/js/common_scripts_min.js"></script>
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+	<script src="/js/modulos/actividades/detalleActividad.js"></script>
+	<script src="/js/modulos/actividades/comunActividades.js"></script>
+
+
+	<!-- Gallery -->
+	<script src="/js/jquery.sliderPro.js"></script>
+	<script type="text/javascript">
+
+
+		$(document).ready(function ($) {
+			scrollTop()
+			obtenerFechas()
+			recibirInformacion()
+			$('#Img_carousel').sliderPro({
+				width: 1000,
+				height: 667,
+				fade: true,
+				arrows: true,
+				buttons: false,
+				fullScreen: false,
+				smallSize: 500,
+				startSlide: 0,
+				mediumSize: 1000,
+				largeSize: 3000,
+				thumbnailArrows: true,
+				autoplay: false
+			});
+		});
+	
+		$(function() {
+			$('input.date-pick').daterangepicker({
+				autoUpdateInput: true,
+				singleDatePicker: true,
+				autoApply: true,
+				minDate:new Date(),
+				showCustomRangeLabel: false,
+				locale: {
+					format: 'MM-DD-YYYY'
+				}
+				}, function(start, end, label) {
+				console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('DD-MM-YYYY') + ' (predefined range: ' + label + ')');
+				});
+			$('input.time-pick').timepicker({
+					minuteStep: 15,
+					showInpunts: false
+			})
+		});
+
+    </script>
+    
+
+	
+	
+</body>
+
+</html>
