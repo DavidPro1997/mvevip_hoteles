@@ -138,11 +138,14 @@ function establecerSalidaHoteles(){
 
 function establecerRegresoHotel(){
     var fechaSalida = document.getElementById("chekInHotel").value
+    let fechaSalidaDate = new Date(fechaSalida);
+    fechaSalidaDate.setDate(fechaSalidaDate.getDate() + 1); 
+    let fechaMinima = fechaSalidaDate.toISOString().split('T')[0];
     flatpickr("#chekOutHotel", {
-        minDate: fechaSalida, 
+        minDate: fechaMinima, 
         dateFormat: "Y-m-d",
         disableMobile: true,
-        defaultDate: fechaSalida,
+        defaultDate: fechaMinima,
         onReady: function(selectedDates, dateStr, instance) {
             instance.open(); 
     }
