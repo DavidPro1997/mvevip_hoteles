@@ -88,6 +88,10 @@ app.config(['$routeProvider', '$locationProvider',function($routeProvider, $loca
             templateUrl : 'lista_hoteles.html',
             controller : 'ListaHotelesController'
         })
+        .when('/reservasHoteles', {
+            templateUrl : 'lista_hoteles_reservas.html',
+            controller : 'ListaHotelesReservasController'
+        })
         .when('/listaCatalogos', {
             templateUrl : 'lista_catalogos.html',
             controller : 'ListaCatalogosController'
@@ -179,6 +183,10 @@ app.controller('ListaTrasladosController', ['$scope', function($scope) {
 
 app.controller('ListaHotelesController', ['$scope', function($scope) {
     $scope.message = 'Bienvenido a la lista de hoteles';
+}]);
+
+app.controller('ListaHotelesReservasController', ['$scope', function($scope) {
+    $scope.message = 'Bienvenido a la lista de reservas de hoteles';
 }]);
 
 app.controller('ListaCatalogosController', ['$scope', function($scope) {

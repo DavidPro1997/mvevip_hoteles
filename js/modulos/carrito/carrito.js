@@ -796,6 +796,8 @@ function eliminarItem(idContenedor, itemId, tipo){
 
 
 
+
+
 function eliminarCivitatis(idContenedor, itemId){
     const carritoId = localStorage.getItem("carritoCivitatis")
     const id = revertirDobleGuionBajo(itemId)

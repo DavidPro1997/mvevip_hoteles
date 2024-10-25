@@ -86,17 +86,82 @@ function irDetalle(){
 
 
 
-function reservarTodo(){
-    scrollTop()
-    editarHeaderFinalizar()
-    editarPropiedades()
-    console.log(arrayReservaHoteles)
-    console.log(datosReservaCivitatis)
-    mensajeUsuario('success','Reserva realizado', '¡Se ha generado la reserva con exito!')
+async function reservarTodo(){
+    abrirSpinner("Realizando su reserva, por favor espere...")
+    const estado = await reservarHotelesFinal(arrayReservaHoteles)
+    if(estado){
+        mensajeUsuario('success', 'Listo',"Se ha reservado los hoteles, verifica tus reservas en el modulo: Hoteles -> Mis Reservas")
+        avanzarFinal()
+        localStorage.removeItem("carritoHoteles")
+        verificarCarritosIndex()
+    }
+    else{
+        mensajeUsuario('info', 'Información',"Algunos items no se pudieron reservar, intentalo nuevamente. Si el problema persiste intenta quitar el item y añadirlo nuevamente.")
+    }
+}
+
+
+async function reservarHotelesFinal(hoteles){
+    let aux = true
+
+    const promesas = hoteles.map(async (element,index) => {
+        return new Promise((resolve, reject) => {
+            Enviar_API_Vuelos(JSON.stringify(element),'/api/hotelbeds/booking/confirmacion', datos => {
+                if (datos.estado){
+                    console.log("Se reservó "+(index+1)+" hotel")
+                    eliminarHotelReservado("hotel_"+index,index)
+                    resolve(); // Resuelve la promesa cuando la respuesta es exitosa
+                }else{
+                    aux = false
+                    cerrarSpinner()
+                    mensajeUsuario('error', 'Ooops...',"El hotel "+index+" de "+hoteles.length+ " no se pudo reservar")
+                    reject(new Error(datos.error)); // Rechaza la promesa en caso de error
+                }
+            })
+        });
+    });
+
+    try {
+        // Espera a que todas las promesas se resuelvan
+        await Promise.all(promesas);
+        return aux; // Devuelve el carrito de hoteles completo
+    } catch (error) {
+        console.error("Error al confirmar tarifas:", error);
+        return false; // Devuelve false en caso de error
+    }
+
+
+
+    // hoteles.forEach((element,index) => {
+    //     Enviar_API_Vuelos(JSON.stringify(element),'/api/hotelbeds/booking/confirmacion', datos => {
+    //         if (datos.estado){
+    //             console.log("Se reservó "+(index+1)+" de "+hoteles.length)
+    //             eliminarHotelReservado("hotel_"+index,index)
+    //         }else{
+    //             aux = false
+    //             cerrarSpinner()
+    //             mensajeUsuario('error', 'Ooops...',"El hotel "+index+" de "+hoteles.length+ " no se pudo reservar")
+    //         }
+    //     })
+    // });
+    // return aux
 }
 
 
 
+function eliminarHotelReservado(idContenedor, itemId){
+    arrayReservaHoteles.splice(itemId,1)
+    const contenedor = document.getElementById(idContenedor);
+    contenedor.remove(); 
+}
+
+
+
+function avanzarFinal(){
+    scrollTop()
+    editarHeaderFinalizar()
+    editarPropiedades()
+}
 
 
 

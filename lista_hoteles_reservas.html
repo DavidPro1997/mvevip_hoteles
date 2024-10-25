@@ -1,0 +1,85 @@
+<div id="search_container_2" style="background-image: url('https://www.sillasmesas.es/blog/wp-content/uploads/2020/03/La-recepcion-de-un-hotel-de-lujo.jpg'); background-position: center;">
+	<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+		<div class="animated fadeInDown">
+			<div id="search_2" style="background-color: transparent; background: none; display: flex; align-items: center; justify-content: center;">
+				 <div class="tab-content" >
+					<div class="tab-pane fade active show" id="hotels">
+						<div class="row">
+							<p>Selecciona un rango de fechas de <strong>CHECK-IN</strong> para ver tus reservas</p>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label><i class="icon-calendar-7"></i> Desde</label>
+									<input class="date-pick form-control" type="text" id="fechaDesde" placeholder="Fecha de Check-In 1" autocomplete="off" readonly onchange="establecerFechaHasta()" style="font-size: 16px; text-align: center; background-color: white;">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label><i class="icon-calendar-7"></i> Hasta</label>
+									<input class="date-pick form-control" type="text" id="fechaHasta" placeholder="Fecha de Check-In 2" autocomplete="off" readonly style="font-size: 16px; text-align: center; background-color: white;">
+								</div>
+							</div>
+						</div>
+						
+						<hr>
+						<button class="btn_1 green" style="background-color: #99c21c;" onclick="buscarReservas()"><i class="icon-search"></i>Buscar ahora</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="animated fadeInDown" style="position: absolute; bottom: 0; left: 20px; padding: 20px; color: white;">
+			<h3 style="font-size: 30px; z-index: 1;">Mis Reservas</h3>			
+		</div>
+	</div>
+</div>
+	<!-- End section -->
+
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="/home">Home</a>
+					</li>
+					<li><a href="/reservasHoteles">Mis reservas</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Position -->
+
+
+		<div class="container margin_60">
+
+			<div class="row">
+				<aside class="col-lg-3">
+					<div class="box_style_2">
+						<i class="icon_set_1_icon-57"></i>
+						<h4>¿Necesitas <span>Ayuda?</span></h4>
+						<a href="tel://004542344599" class="phone">+593 423 445 99</a>
+						<small>Contacta a uno de nuestros asesores</small>
+					</div>
+				</aside>
+				<!--End aside -->
+				<div class="col-lg-9">
+					<div id="listaReservasHoteles">
+
+					</div>
+				</div>
+				<!-- End col lg-9 -->
+			</div>
+			<!-- End row -->
+		</div>
+	<script src="js/modulos/comun.js"></script>
+	<script src="js/cat_nav_mobile.js"></script>
+	<script src="js/modulos/hoteles/listaReservas.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+	</script>
+	
+	<script>
+            
+		$(document).ready(e => {
+			scrollTop()
+			iniciarListaReservas()
+		})
+
+	</script>
