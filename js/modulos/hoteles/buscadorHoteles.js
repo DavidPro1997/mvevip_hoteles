@@ -7,8 +7,8 @@ function mostrarValoresDefaultHoteles(){
             </a>
         </div>
          <div class="col-12">
-            <a class="dropdown-item text-wrap" href="#" onclick="escogerSalida('JFK - New York - USA');return false;" style="white-space: normal;">
-                <strong>JFK - New York</strong> 
+            <a class="dropdown-item text-wrap" href="#" onclick="escogerSalida('NYC - New York - USA');return false;" style="white-space: normal;">
+                <strong>NYC - New York</strong> 
                 <span class="text-muted" style="font-size: small;">USA</span>
             </a>
         </div>
@@ -31,8 +31,8 @@ function mostrarValoresDefaultHoteles(){
             </a>
         </div>
         <div class="col-12">
-            <a class="dropdown-item text-wrap" href="#" onclick="escogerSalida('ORL - Orlando - USA');return false;" style="white-space: normal;">
-                <strong>ORL - Orlando</strong> 
+            <a class="dropdown-item text-wrap" href="#" onclick="escogerSalida('MCO - Orlando - USA');return false;" style="white-space: normal;">
+                <strong>MCO - Orlando</strong> 
                 <span class="text-muted" style="font-size: small;">USA</span>
             </a>
         </div>

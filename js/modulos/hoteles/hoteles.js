@@ -67,11 +67,13 @@ function armarInformacion(datos){
 
 
 var hotelesGlobal = []
+var noches = 0
 function consultarHoteles(info){
     abrirSpinner("Cargando hoteles, por favor espere")
     console.log(info)
     Enviar_API_Vuelos(JSON.stringify(info), '/api/hotelbeds/booking/disponibilidad', datos => {
         if (datos.estado){
+            noches = calcularNoches(datos.consulta.checkIn, datos.consulta.checkOut)
             guardarDatosCache(info, datos.consulta.hotels)
             hotelesGlobal = datos.consulta.hotels
             armarHoteles(datos.consulta.hotels)
@@ -365,78 +367,42 @@ function agregarItemHoteles(informacion){
 
 
 
-// function agregarItemHoteles(informacion){
-//     console.log(informacion)
-//     let datosHoteles= {hotel: {},ocupantes: ocupantes}
-//     Enviar_API_Vuelos(JSON.stringify(informacion), '/api/hotelbeds/booking/confirmarTarifas', datos => {
-//         if (datos.estado){
-//             let carritoHoteles = JSON.parse(localStorage.getItem("carritoHoteles"))
-//             datosHoteles.hotel = datos.consulta.hotel
-//             if(carritoHoteles){
-//                 carritoHoteles.push(datosHoteles)
-//                 localStorage.setItem("carritoHoteles", JSON.stringify(carritoHoteles))
-//             }else{
-//                 let hoteles = []
-//                 hoteles.push(datosHoteles)
-//                 localStorage.setItem("carritoHoteles", JSON.stringify(hoteles))
-//             }
-//             cerrarSpinner()
-//             const url = window.location.origin + "/carrito"
-//             window.location.href = url;   
-//         }else{
-//             cerrarSpinner()
-//             mensajeUsuario('info', 'Ooops...',datos.error)
-//             return false
-//         }
-//     })
-
-// }
-
-
-
-
-
 function actualizarResumen(){
     let lista = ""
     lista +=`
-        <div class="border p-3 mt-4 mt-lg-0 rounded">
-            <h4 class="header-title mb-3">`+cuartos[0].nombreHotel+`</h4>
 
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <tbody>`
-                        let precioTotal = 0
-                        cuartos.forEach(element => {
-                            $("#reservar"+element.idHotel).show()
-                            lista +=`
-                                <tr>
-                                    <td>
-                                        <strong>`+element.numero+` Habitación(es) </strong> <br>
-                                        Por `+element.adultos+` adultos `
-                                        if(element.ninos){
-                                            lista += `y `+element.ninos+` niños de `+element.edadesNinos+` años`
-                                        }
-                                        precioTotal = precioTotal + parseFloat(element.precio)
-                                        lista += ` <br>
-                                        `+element.nombreHabitacion+`
-                                    </td>
-                                    <td style="vertical-align: middle;">$`+element.precio+`</td>
-                                </tr>`
-                        });
-                        lista +=`
-                        <tr>
-                            <th>TOTAL:</th>
-                            <th>$`+(precioTotal).toFixed(2)+`</th>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-4" style="padding-left:30px;">
+                <h4 class="header-title mb-3">`+cuartos[0].nombreHotel+`</h4>
             </div>
-            <!-- end table-responsive -->
-        </div>
-    `
+
+            <div class="col-md-6" style="display: flex; flex-direction: column;">`
+                let precioTotal = 0
+                cuartos.forEach(element => {
+                    $("#reservar"+element.idHotel).show()
+                    lista +=`
+                        <p>
+                            <strong>`+element.numero+` Habitación(es)</strong> `+element.nombreHabitacion+`
+                            Por `+element.adultos+` adultos`
+                            if(element.ninos){
+                                lista += `y `+element.ninos+` niños de `+element.edadesNinos+` años`
+                            }
+                            precioTotal = precioTotal + parseFloat(element.precio)
+                            lista += ` $`+element.precio+`
+                        </p>`
+                });
+                lista +=`
+            </div>
+            <div class="col-md-2" style="display: flex; flex-direction: column; align-items: center;">
+                <strong style="margin: 0;" font-size:22px;>TOTAL: $`+(precioTotal).toFixed(2)+`</strong>
+                <button type="submit" class="btn_full" onclick="reservarHotel();" style="background-color: #99c21c; color: white;">
+                    RESERVAR
+                </button>
+            </div>
+
+            `
+
     $("#resumenHoteles").html(lista)
     $("#resumenContenedor").show()
-    $("#botonReservar").show()
 }
 
 
@@ -459,11 +425,9 @@ function escogerHotel(datos){
     if(verificarIdHotel(cuartos)){
         $("#reservar"+idHotel).show()
         actualizarResumen()
-        scrollTop()
     }else{
         $("#resumenHoteles").html("")
         $("#resumenContenedor").hide()
-        $("#botonReservar").hide()
         $("#reservar"+idHotel).hide()
         
     }
@@ -532,7 +496,7 @@ function armarHoteles(datos){
                             <div>
                                 <small>Desde</small>
                                 <sup>$</sup>`+(parseFloat(element.minRate)).toFixed(2)+`
-                                <small>*Por noche</small>
+                                <small>*Por `+noches+` noche(s)</small>
                                 <p>
                                     <a href="#habitaciones`+element.code+`" class="btn_1" data-bs-toggle="collapse" style ="background-color: #99c21c;">Habitaciones</a>
                                 </p>
@@ -582,6 +546,20 @@ function armarHoteles(datos){
         construirHabitaciones2(element.rooms,element.code,element.name)
     });
     cerrarSpinner()
+}
+
+
+function calcularNoches(fechaInicio, fechaFin) {
+    // Crear objetos Date asegurando que se interpreten correctamente
+    const inicio = new Date(`${fechaInicio}T00:00:00`);
+    const fin = new Date(`${fechaFin}T00:00:00`);
+    
+    // Calcular la diferencia en milisegundos
+    const diferenciaTiempo = fin - inicio;
+    
+    // Convertir la diferencia de tiempo en noches (milisegundos en un día)
+    const noches = diferenciaTiempo / (1000 * 60 * 60 * 24);
+    return Math.max(0, Math.floor(noches)); // Asegura que no sea negativo
 }
 
 
