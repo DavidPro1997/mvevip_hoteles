@@ -440,7 +440,17 @@ function goToSlide(slideIndex) {
     carousel.to(slideIndex);
 }
 
-
+function obtenerExclusiveDeal(id){
+    if(id == 1){
+        return "PREFERENCIALES"
+    }else if(id == 2){
+        return "TOP HOTELES"
+    }else if(id == 3){
+        return "REGULARES"
+    }else{
+        return id
+    }
+}
 
 
 function armarHoteles(datos){
@@ -454,7 +464,7 @@ function armarHoteles(datos){
                     <div class="col-lg-4 col-md-4 position-relative">`
                         if(element.exclusiveDeal){
                             lista += `
-                            <div class="ribbon_3"><span style="font-size:7px;">exclusiveDeal: `+element.exclusiveDeal+`</span></div>
+                            <div class="ribbon_3"><span style="font-size:7px;">`+obtenerExclusiveDeal(element.exclusiveDeal)+`</span></div>
                             `
                         }
                         lista += `

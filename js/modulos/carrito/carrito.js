@@ -223,9 +223,13 @@ function contruirItemsHoteles(carritoHoteles){
         lista += `
             <div class="strip_all_tour_list wow fadeIn" data-wow-delay="0.1s" id="hotel_`+index+`">
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 position-relative">
-                        <div class="ribbon_3 popular"><span>Popular</span>
-                        </div>
+                    <div class="col-lg-4 col-md-4 position-relative">`
+                        if(element.exclusiveDeal){
+                            lista += `
+                            <div class="ribbon_3"><span style="font-size:7px;">`+obtenerExclusiveDeal(element.exclusiveDeal)+`</span></div>
+                            `
+                        }
+                        lista += `
                         <div class="img_list" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%">
                             <img src="https://visionglobal.com.mx/wp-content/uploads/2015/08/HOTELES.COM-MUESTRA-SU-NUEVA-CAMPA%C3%91A1.jpg" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">
                         </div>
