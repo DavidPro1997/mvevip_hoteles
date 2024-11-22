@@ -111,6 +111,8 @@ async function confirmarTarifasHoteles(carritoHotelesInfo) {
         return carritoHoteles; // Devuelve el carrito de hoteles completo
     } catch (error) {
         console.error("Error al confirmar tarifas:", error);
+        localStorage.removeItem("carritoHoteles")
+        enviarHome()
         return false; // Devuelve false en caso de error
     }
 }
@@ -402,8 +404,15 @@ function construirHabitaciones2(habitaciones,codigoHotel,nombreHotel, ocupantes,
                                 <div class="dropdown-menu p-3 text-muted" style="width: 700px;" style="display: none;">
                                 </div>
                             </div>
+                            <div class="col-12 mt-2" style="display: flex; flex-direction: column;">
+                                <p style="margin-right: 15px; margin-left: 15px; text-align: justify;">
+                                    <strong>Comentarios</strong><br>
+                                    `+valores.rateComments+`
+                                </p>
+                            </div>
                         `
                     }); 
+                    
                 });
                 lista += `
             </div>

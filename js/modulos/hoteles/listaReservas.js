@@ -9,7 +9,12 @@ function buscarReservas(){
     const fechaHasta = document.getElementById("fechaHasta").value
     Obtener_API_Vuelos(null, '/api/hotelbeds/booking/reservas?from='+fechaDesde+'&to='+fechaHasta, datos => {
         if (datos.estado) {
-            armarReservas(datos.consulta.bookings.bookings)
+            if(datos.consulta.bookings.bookings){
+                armarReservas(datos.consulta.bookings.bookings)
+            }else{
+                mensajeUsuario("info","Ooops...","No hay reservas en las fechas seleccionadas")
+            }
+            
         }
         else{
             mensajeUsuario("error","Ooops...",datos.error)
@@ -19,12 +24,9 @@ function buscarReservas(){
 
 
 function armarReservas(reservas){
-    if(reservas.lenght > 0){
-        const lista = "<h4>No hay <span>reservas</span> que coincidan con tu <span>busqueda</span>.</h4>"
-        $("#listaReservasHoteles").html(lista)
-    }else{
+    
         contruirItemsHoteles(reservas)
-    }
+    
     
 }
 
@@ -93,6 +95,14 @@ function contruirItemsHoteles(reservas){
                                 </div>
                             </div> 
                             `+sacarHabitaciones(element.hotel.rooms)+`
+                            <div class="row" style="display: flex;">
+                                <div class="col-1">
+                                    <i class="icon-download-2" style="font-size:13px; color:#99c21c;"></i>
+                                </div>
+                                <div class="col-11">
+                                    <a href="#" onclick="descargarVoucher('`+element.reference+`'); return false;">Descargar voucher</a>
+                                </div>
+                            </div> 
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-2" style="position: relative;">
@@ -118,6 +128,109 @@ function contruirItemsHoteles(reservas){
         $("#listaReservasHoteles").append(lista)
     });
     
+}
+
+
+function descargarVoucher(id){
+    abrirSpinner("Descargando su voucher...")
+    Obtener_API_Vuelos(null,'/api/hotelbeds/booking/reservas/'+id, datos => {
+        if (datos.estado) {
+            const voucher = armarArrayVoucher(datos.consulta.booking)
+            apiVoucher(voucher)
+            // buscarReservas()
+            // cerrarSpinner()
+        } else {
+            cerrarSpinner()
+            mensajeUsuario("error","Ooops...",datos.error)            
+        }
+    })
+}
+
+
+function apiVoucher(datos){
+    Enviar_API_Vuelos(JSON.stringify(datos), '/api/hotelbeds/booking/voucher', (datos) => {
+        if (datos.estado) {
+            descargarPDF(datos.base64)
+            cerrarSpinner()
+            
+        } else {
+            cerrarSpinner();
+            mensajeUsuario('error', 'Ooops...', datos.error);
+        }
+    });
+}
+
+
+function descargarPDF(base64, nombreArchivo = 'voucher_reserva_hotel.pdf') {
+    // Convertir Base64 a un blob
+    const blob = base64ToBlob(base64, 'application/pdf');
+    
+    // Crear un enlace para descargar el archivo
+    const enlace = document.createElement('a');
+    enlace.href = URL.createObjectURL(blob);
+    enlace.download = nombreArchivo;
+    
+    // Simular el clic en el enlace
+    document.body.appendChild(enlace);
+    enlace.click();
+    
+    // Limpiar el DOM
+    document.body.removeChild(enlace);
+}
+
+// Función auxiliar para convertir Base64 a Blob
+function base64ToBlob(base64, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+    
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+    
+    return new Blob(byteArrays, { type: contentType });
+}
+
+
+
+function armarArrayVoucher(datos){
+    aux = {
+        tipo: "voucher_hotel",
+        booking_id: datos.reference,
+        holder_name: datos.holder.name+" "+datos.holder.surname,
+        country: datos.hotel.destinationCode,
+        hotel_name: datos.hotel.name,
+        hotel_address: datos.hotel.destinationName,
+        hotel_category: datos.hotel.categoryName,
+        hotel_phone: "+54988182490",
+        check_in: datos.hotel.checkIn,
+        check_out: datos.hotel.checkOut,
+        vat_numer: datos.hotel.supplier.vatNumber,
+        reference: datos.clientReference,
+        remark_cliente: datos.remark,
+        rooms: []
+    }
+    datos.hotel.rooms.forEach((element,index) => {
+        const lista = {
+            room_number: element.rates[0].rooms,
+            room_name: element.name,
+            acomodation: element.boardName,
+            name_pax: element.paxes[0].name+" "+element.paxes[0].surname,
+            adults: element.rates[0].adults.toString(),
+            children: element.rates[0].children.toString(),
+            age_children: "",
+            board_basis: "Descripcion",
+            rate_comments: element.rateComments,
+            payable: element.paymentType
+        }
+        aux.rooms.push(lista)
+    });
+    return aux
 }
 
 

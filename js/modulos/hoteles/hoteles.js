@@ -451,14 +451,21 @@ function armarHoteles(datos){
         lista += `
             <div class="strip_all_tour_list wow fadeIn" data-wow-delay="0.1s">
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 position-relative">
-                        <div class="ribbon_3 popular"><span>Popular</span>
-                        </div>
-                        <div class="wishlist">
-                            <a class="tooltip_flip tooltip-effect-1" href="javascript:void(0);">+<span class="tooltip-content-flip"><span class="tooltip-back">Add to wishlist</span></span></a>
-                        </div>
+                    <div class="col-lg-4 col-md-4 position-relative">`
+                        if(element.exclusiveDeal){
+                            lista += `
+                            <div class="ribbon_3"><span style="font-size:7px;">exclusiveDeal: `+element.exclusiveDeal+`</span></div>
+                            `
+                        }
+                        lista += `
                         <div class="img_list">
-                            <a href="#"  data-bs-toggle="modal" data-bs-target="#centermodal2"><img src="https://visionglobal.com.mx/wp-content/uploads/2015/08/HOTELES.COM-MUESTRA-SU-NUEVA-CAMPA%C3%91A1.jpg" alt="Image">
+                            <a href="#"  data-bs-toggle="modal" data-bs-target="#centermodal2">`
+                                if(element.images.length>0){
+                                    lista+= `<img src="`+element.images[0][0]+`" alt="Image">`
+                                }else{
+                                    lista+= `<img src="img/hoteles/mkv.png" alt="Image">`
+                                }
+                                lista +=`
                                 <div class="short_info">
                                     <i class="pe-7s-camera" style="margin-right: 10px;"></i>Ver fotografías completas
                                 </div>
@@ -495,7 +502,9 @@ function armarHoteles(datos){
                         <div class="price_list">
                             <div>
                                 <small>Desde</small>
-                                <sup>$</sup>`+(parseFloat(element.minRate)).toFixed(2)+`
+                                <sup>$</sup>`
+                                const precio = parseFloat(element.minRate)+100
+                                lista += precio.toFixed(2)+`
                                 <small>*Por `+noches+` noche(s)</small>
                                 <p>
                                     <a href="#habitaciones`+element.code+`" class="btn_1" data-bs-toggle="collapse" style ="background-color: #99c21c;">Habitaciones</a>
@@ -595,7 +604,15 @@ function construirHabitaciones2(habitaciones,codigoHotel,nombreHotel){
                                     `+cancelacion(valores)+`
                                 </div>
                                 <div class="col-3 justify-content-center" style="display: flex; flex-direction: column; align-items: end;">
-                                    <span style="font-size: 14px"><strong>$`+valores.net+` USD</strong></span>
+                                    <span style="font-size: 14px"><strong>$`
+                                    if(valores.sellingRate){
+                                        const precio = parseFloat(valores.sellingRate)+100
+                                        lista += precio
+                                    }else{
+                                        const precio = parseFloat(valores.net)+100
+                                        lista += precio
+                                    }
+                                    lista +=` USD</strong></span>
                                     <a href="" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">Detalles de precio</a>
                                     <div class="dropdown-menu p-3 text-muted" style="width: 700px;" style="display: none;">
                                         
