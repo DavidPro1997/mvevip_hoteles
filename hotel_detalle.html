@@ -1,0 +1,193 @@
+<style>
+	.flatpickr-calendar {
+    left: 50% !important;  /* Centrar horizontalmente */
+    top: 50% !important;   /* Centrar verticalmente */
+    transform: translate(-50%, -50%) !important;  /* Ajusta el desplazamiento para estar perfectamente centrado */
+}
+</style>
+
+<div id="heaederActividad">
+
+</div>
+
+		<div id="position">
+			<div class="container">
+				<ul>
+					<li><a href="#">Home</a>
+					</li>
+					<li><a href="/listaHoteles">Hoteles</a>
+					</li>
+					<li>Detalles</li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="container margin_60" style="margin-bottom: 0; padding-bottom: 0;">
+			<div class="row">
+				<div class="col-lg-8" id="single_tour_desc">
+					<div id="single_tour_feat">
+						<ul id="listaFacilities">
+							
+						</ul>
+					</div>
+					<div id="imagenes_hotel"></div>
+					<hr>
+				</div>
+				<aside class="col-lg-4">
+					<button id="botonReservar" type="submit" class="btn btn_full" onclick="scrollHabitaciones();" style="background-color:#99c21c; color: white;">Reservar</button>
+					<div class="box_style_4">
+						<i class="icon_set_1_icon-90"></i>
+						<h4><span>Reservar</span> por teléfono</h4>
+						<a href="tel://004542344599" class="phone">+59388182490</a>
+						<small style="text-align: justify;">¿Dificultades para reservar? Llámanos y uno de nuestros asesores te asistirá personalmente para asegurar tu reserva de forma rápida y sencilla.</small>
+					</div>
+				</aside>
+			</div>
+			<!--End row -->
+		</div>
+		
+		<div class="container margin_60" style="margin-top: 0; padding-top: 0;">
+			<div class="main_title">
+				<h2><span>¡DETALLES! </span>del hotel</h2>
+			</div>
+
+			<div style="
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				min-height: 120px;
+				background-color: white;
+				z-index: 1000;
+				box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+				display: none;" id="resumenContenedor">
+				<div class="row" style="margin-top: 20px;" id="resumenHoteles">
+					
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-lg-3">
+					<h3>Descripción</h3>
+				</div>
+				<div class="col-lg-9">
+					<div id="descripcion"></div>
+					<div id="serviciosHotel"></div>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-lg-3">
+					<h3>Ubicación</h3>
+				</div>
+				<div class="col-lg-9" id="ubicacion_hotel">
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-lg-3">
+					<h3>Teléfonos</h3>
+				</div>
+				<div class="col-lg-9" id="telefono_hotel">
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-lg-3">
+					<h3>Habitaciones</h3>
+					<div id="filters_col">
+						<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters" id="filters_col_bt"><i class="icon_set_1_icon-65"></i>Filtros</a>
+						<div class="collapse show" id="collapseFilters">
+							
+							<div class="filter_type">
+								<h6>Por Tipo de habitación</h6>
+								<ul id="listaTipoHabitacion">
+									
+								</ul>
+							</div>
+							
+							<div class="row mt-4">
+								<div class="col-12" style="align-items: center; display: flex; justify-content: center;">
+									<button class="btn_1 green" style="background-color: #99c21c;" onclick="filtrarHabitaciones()"><i class="icon-search"></i>Filtrar</button>
+								</div>
+							</div> 
+						</div>
+						<!--End collapse -->
+					</div>
+				</div>
+				<div class="col-lg-9" id="habitaciones_detalle">
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-lg-3">
+					<button class="btn_1 green" style="background-color: #838881; display: flex; align-items: center; justify-content: center;" onclick="goBack()">
+						<i class="icon-right" style="font-size: 20px;"></i>
+						Regresar
+					</button>
+				</div>
+			</div>
+		</div>
+        
+        <div id="overlay"></div>
+		<!-- Mask on input focus -->
+        
+	<script src="/js/functions.js"></script>
+	<script src="/js/modulos/comun.js"></script>
+	<script src="js/modulos/hoteles/detalleHoteles.js"></script>
+	<script src="js/modulos/hoteles/comunHoteles.js"></script>
+	<script src="js/modulos/comun.js"></script>
+
+
+	<!-- Gallery -->
+	<script src="/js/jquery.sliderPro.js"></script>
+	<script type="text/javascript"></script>
+
+<!-- Cat nav mobile -->
+	<script src="/js/cat_nav_mobile.js"></script>
+	<script>
+		$('#cat_nav').mobileMenu();
+		$(document).ready(function ($) {
+			scrollTop()
+			// obtenerFechas()
+			recibirInformacion()
+			$('#Img_carousel').sliderPro({
+				width: 1000,
+				height: 667,
+				fade: true,
+				arrows: true,
+				buttons: false,
+				fullScreen: false,
+				smallSize: 500,
+				startSlide: 0,
+				mediumSize: 1000,
+				largeSize: 3000,
+				thumbnailArrows: true,
+				autoplay: false
+			});
+		});
+	
+		$(function() {
+			$('input.date-pick').daterangepicker({
+				autoUpdateInput: true,
+				singleDatePicker: true,
+				autoApply: true,
+				minDate:new Date(),
+				showCustomRangeLabel: false,
+				locale: {
+					format: 'MM-DD-YYYY'
+				}
+				}, function(start, end, label) {
+				console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('DD-MM-YYYY') + ' (predefined range: ' + label + ')');
+				});
+			$('input.time-pick').timepicker({
+					minuteStep: 15,
+					showInpunts: false
+			})
+		});
+
+    </script>
+</body>
+
+</html>

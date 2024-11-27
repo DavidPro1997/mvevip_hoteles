@@ -1,11 +1,10 @@
 async function recibirInformacion() {
-
     const urlParams = new URLSearchParams(window.location.search);
     const datosString = urlParams.get('datos');
 
         if (datosString) {
             const datos = JSON.parse(decodeURIComponent(datosString));
-            armarInformacion(datos)
+            armarOcupantes(datos)
             setearInformacion(datos)
             consultarHoteles(datos)
         } else {
@@ -13,7 +12,9 @@ async function recibirInformacion() {
             let datos = await recuperarDatosCache("cacheHoteles");
             const hotelesCache = datos.datos
             if(hotelesCache){
-                armarInformacion(hotelesCache.datos)
+                console.log(hotelesCache)
+                noches = calcularNoches(hotelesCache.datos.stay.checkIn, hotelesCache.datos.stay.checkOut)
+                armarOcupantes(hotelesCache.datos)
                 setearInformacion(hotelesCache.datos)
                 hotelesGlobal = hotelesCache.hoteles
                 armarHoteles(hotelesCache.hoteles)
@@ -30,9 +31,8 @@ async function recibirInformacion() {
 
 
 
-var cuartos = []
 var ocupantes = []
-function armarInformacion(datos){
+function armarOcupantes(datos){
     ocupantes = datos.occupancies
     ocupantes.forEach((element,index) => {
         let edades = ""
@@ -46,19 +46,6 @@ function armarInformacion(datos){
                 
             });
         }
-        let nuevoCuarto = {
-            id: armarId(index, datos.occupancies),
-            numero: element.rooms,
-            idHabitacion: "",
-            nombreHabitacion:"",
-            nombreHotel: "",
-            idHotel: "",
-            precio:"",
-            adultos: element.adults,
-            ninos: element.children,
-            edadesNinos: edades
-        }
-        cuartos.push(nuevoCuarto)
     });
 }
 
@@ -94,9 +81,6 @@ function guardarDatosCache(info, hoteles){
     const datos = {datos: info, hoteles: hoteles}
     guardarCache(datos, "cacheHoteles")
 }
-
-
-
 
 
 
@@ -288,157 +272,9 @@ function setearInformacion(datos){
 
 
 
-function verificarIdHotel(array) {
-    if (array.length === 0) {
-        return false; // Si el array está vacío, retornamos false
-    }
-    const idHotelReferencia = array[0].idHotel;
-    for (let i = 1; i < array.length; i++) {
-        // Verificamos si el idHotel es diferente o si está vacío
-        if (array[i].idHotel !== idHotelReferencia || array[i].idHotel === '') {
-            return false; // Si encontramos un idHotel diferente o vacío, retornamos false
-        }
-    }
-    if (idHotelReferencia === '') {
-        return false;
-    }
-    return true; 
-}
 
 
 
-function reservarHotel(){
-    let informacion={
-        rooms: []
-    }
-    if(verificarIdHotel){
-        cuartos.forEach(element => {
-            let nuevoRoom ={
-                rateKey : element.idHabitacion    
-            }
-            informacion.rooms.push(nuevoRoom)
-
-            ocupantes.forEach((ocu,index) => {
-                if(armarId(index, ocupantes) == element.id){
-                    ocu.rateKey = element.idHabitacion
-                }
-            });
-
-
-        });
-        hacerReserva(informacion)
-    }        
-}
-
-
-
-
-
-
-function hacerReserva(informacion){
-    abrirSpinner("Añadiendo hotel a su carrito...")
-    agregarItemHoteles(informacion)
-}
-
-
-
-
-function agregarItemHoteles(informacion){
-    let datosHoteles= {hotel: informacion,ocupantes: ocupantes}
-    let carritoHoteles = JSON.parse(localStorage.getItem("carritoHoteles"))
-    if(carritoHoteles){
-        carritoHoteles.push(datosHoteles)
-        localStorage.setItem("carritoHoteles", JSON.stringify(carritoHoteles))
-    }else{
-        let hoteles = []
-        hoteles.push(datosHoteles)
-        localStorage.setItem("carritoHoteles", JSON.stringify(hoteles))
-    }
-    setTimeout(function(){
-        cerrarSpinner()
-        const url = window.location.origin + "/carrito"
-        window.location.href = url;   
-    },1000)
-    
-       
-
-}
-
-
-
-
-function actualizarResumen(){
-    let lista = ""
-    lista +=`
-
-            <div class="col-md-4" style="padding-left:30px;">
-                <h4 class="header-title mb-3">`+cuartos[0].nombreHotel+`</h4>
-            </div>
-
-            <div class="col-md-6" style="display: flex; flex-direction: column;">`
-                let precioTotal = 0
-                cuartos.forEach(element => {
-                    $("#reservar"+element.idHotel).show()
-                    lista +=`
-                        <p>
-                            <strong>`+element.numero+` Habitación(es)</strong> `+element.nombreHabitacion+`
-                            Por `+element.adultos+` adultos`
-                            if(element.ninos){
-                                lista += `y `+element.ninos+` niños de `+element.edadesNinos+` años`
-                            }
-                            precioTotal = precioTotal + parseFloat(element.precio)
-                            lista += ` $`+element.precio+`
-                        </p>`
-                });
-                lista +=`
-            </div>
-            <div class="col-md-2" style="display: flex; flex-direction: column; align-items: center;">
-                <strong style="margin: 0;" font-size:22px;>TOTAL: $`+(precioTotal).toFixed(2)+`</strong>
-                <button type="submit" class="btn_full" onclick="reservarHotel();" style="background-color: #99c21c; color: white;">
-                    RESERVAR
-                </button>
-            </div>
-
-            `
-
-    $("#resumenHoteles").html(lista)
-    $("#resumenContenedor").show()
-}
-
-
-
-
-function escogerHotel(datos){
-    var informacion = JSON.parse(datos);
-    let idHotel= ""
-    cuartos.forEach(element => {
-        if(element.id == informacion.id){
-            element.idHabitacion = informacion.idHabitacion
-            element.idHotel = informacion.idHotel
-            element.nombreHabitacion = informacion.nombreHabitacion
-            element.precio = informacion.precio
-            element.nombreHotel = informacion.nombreHotel
-            
-        }
-        idHotel = informacion.idHotel
-    });
-    if(verificarIdHotel(cuartos)){
-        $("#reservar"+idHotel).show()
-        actualizarResumen()
-    }else{
-        $("#resumenHoteles").html("")
-        $("#resumenContenedor").hide()
-        $("#reservar"+idHotel).hide()
-        
-    }
-}
-
-
-
-function goToSlide(slideIndex) {
-    var carousel = new bootstrap.Carousel(document.getElementById('carouselExampleFade'));
-    carousel.to(slideIndex);
-}
 
 function obtenerExclusiveDeal(id){
     if(id == 1){
@@ -469,9 +305,9 @@ function armarHoteles(datos){
                         }
                         lista += `
                         <div class="img_list">
-                            <a href="#"  data-bs-toggle="modal" data-bs-target="#centermodal2">`
+                            <a href="#"  onclick="verHotel('`+element.code+`'); return false;">`
                                 if(element.images.length>0){
-                                    lista+= `<img src="`+element.images[0][0]+`" alt="Image">`
+                                    lista+= `<img src="`+element.images[0][element.images[0].length-1]+`" alt="Image">`
                                 }else{
                                     lista+= `<img src="img/hoteles/mkv.png" alt="Image">`
                                 }
@@ -517,54 +353,29 @@ function armarHoteles(datos){
                                 lista += precio.toFixed(2)+`
                                 <small>*Por `+noches+` noche(s)</small>
                                 <p>
-                                    <a href="#habitaciones`+element.code+`" class="btn_1" data-bs-toggle="collapse" style ="background-color: #99c21c;">Habitaciones</a>
+                                    <a href="#" onclick="verHotel('`+element.code+`'); return false;" class="btn_1" style ="background-color: #99c21c;">Ver Hotel</a>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <br>
-                <div class="collapse" id="habitaciones`+element.code+`">`
-                    ocupantes.forEach((aux,index) => {
-                        lista += `
-                        <a href="#habitacion`+element.code+`_`+index+`" data-bs-toggle="collapse" class="d-flex justify-content-between align-items-center">
-                            <h6><strong>`+aux.rooms+` HABITACIÓN(ES) </strong> POR `+aux.adults+` ADULTO(S)`
-                                if(aux.children){
-                                    lista += ` + `+aux.children+` NIÑO(S) DE `
-                                    aux.paxes.forEach(ninos => {
-                                        if(ninos.type == "CH"){
-                                            lista += ` `+ninos.age+` AÑOS `
-                                        }
-
-                                    });
-                                }
-                                lista += `
-                            </h6>
-                            <span>Ocultar <i class="icon-up-open" style="font-size: 22px; margin-right:10px;"></i></span>
-                        </a>
-                        <div class="collapse show" id="habitacion`+element.code+`_`+index+`">
-                            <div id="rooms_`+element.code+`_`+armarId(index, ocupantes)+`">
-                            </div>
-                        </div> 
-                        <br>`
-
-                    });
-                    lista += `
-                    <div class="row mt-3 mb-3" id="reservar`+element.code+`" style="display:none;">
-                        <div class="text-center">
-                            <button type="submit" class="btn" onclick="reservarHotel();" style="background-color: #99c21c; color: white; align-items: center;">
-                                    RESERVAR
-                            </button>
-                        </div>
-                    </div>
-                    <br>
-                </div>
             </div>
         `
         $("#listaHoteles").append(lista)
-        construirHabitaciones2(element.rooms,element.code,element.name)
+        // construirHabitaciones2(element.rooms,element.code,element.name)
     });
     cerrarSpinner()
+}
+
+
+function verHotel(id){
+    datos = {
+        idHotel: id,
+        ocupantes: ocupantes
+    }
+    let datosString = encodeURIComponent(JSON.stringify(datos));
+    let url = window.location.origin + "/hotelDetalle?datos=" + datosString;
+    window.location.href = url;
 }
 
 
@@ -581,73 +392,6 @@ function calcularNoches(fechaInicio, fechaFin) {
     return Math.max(0, Math.floor(noches)); // Asegura que no sea negativo
 }
 
-
-function construirHabitaciones2(habitaciones,codigoHotel,nombreHotel){
-    let lista = ""
-    habitaciones.forEach(element => {
-        let datos =   dividirPorTipo(element.rates,element.name, nombreHotel, ocupantes)
-        datos.forEach(data => {
-            lista  += `
-            <hr style="margin:0 0 10px 0; height: 2px;">
-            <h7 style="color: blue; margin-left:15px;"><strong>`+data.habitacion.toUpperCase()+`</strong></h7>
-            <br><br>
-            <div class="row">`
-                data.regimen.forEach((regimen, indice) => {
-                    if(indice > 0){
-                        lista += `<hr style="margin:0 0 10px 0;">`
-                    }
-                    lista +=`
-                    <div class="col-2 d-flex align-items-center">
-                        <small style="margin-left:15px;">`+regimen.boardName+`</small>
-                    </div>
-                    <div class="col-1 d-flex align-items-end justify-content-end">
-                        <div style="width: 1px; height: 100%; background-color: #ddd;"></div>
-                    </div>
-                    <div class="col-9" style="display: flex; flex-direction: column;" >`
-                        regimen.valores.forEach((valores,index) => {
-                            if(index > 0){
-                                lista += `<hr style="margin:0 0 10px 0;">`
-                            }
-                            lista += `
-                            <div class="row mb-2">
-                                <div class="col-7" style="display: flex; flex-direction: column;" >
-                                    `+cancelacion(valores)+`
-                                </div>
-                                <div class="col-3 justify-content-center" style="display: flex; flex-direction: column; align-items: end;">
-                                    <span style="font-size: 14px"><strong>$`
-                                    if(valores.sellingRate){
-                                        const precio = parseFloat(valores.sellingRate)+100
-                                        lista += precio
-                                    }else{
-                                        const precio = parseFloat(valores.net)+100
-                                        lista += precio
-                                    }
-                                    lista +=` USD</strong></span>
-                                    <a href="" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">Detalles de precio</a>
-                                    <div class="dropdown-menu p-3 text-muted" style="width: 700px;" style="display: none;">
-                                        
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex align-items-center justify-content-center">
-                                    <input class="form-check-input" type="radio" name="radio`+data.id+`" id="customradio2" style="transform: scale(1.5);" value='`+JSON.stringify(informacionResumen(data.id, valores,codigoHotel,nombreHotel,data.habitacion))+`' onclick="escogerHotel(this.value)">
-                                </div>
-                            </div>
-                            
-                            `
-                        }); 
-                        lista += `
-                    </div>
-                    `
-                });
-                lista += `
-            </div>
-            `
-            $("#rooms_"+codigoHotel+"_"+data.id).append(lista)
-            lista = ""
-        });
-    });
-
-}
 
 function goBack() {
     var url = window.location.origin + "/home"

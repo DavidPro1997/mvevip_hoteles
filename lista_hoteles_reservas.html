@@ -1,3 +1,9 @@
+<style>
+    .tour_list_desc::-webkit-scrollbar {
+        width: 0px;  /* Oculta la barra de desplazamiento */
+    }
+</style>
+
 <div id="search_container_2" style="background-image: url('https://www.sillasmesas.es/blog/wp-content/uploads/2020/03/La-recepcion-de-un-hotel-de-lujo.jpg'); background-position: center;">
 	<div class="parallax-content-1 opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
 		<div class="animated fadeInDown">
@@ -71,7 +77,9 @@
 	<script src="js/modulos/comun.js"></script>
 	<script src="js/cat_nav_mobile.js"></script>
 	<script src="js/modulos/hoteles/listaReservas.js"></script>
-	<script>
+	<script src="js/modulos/hoteles/voucher.js"></script>
+
+<script>
 		$('#cat_nav').mobileMenu();
 	</script>
 	
@@ -80,6 +88,7 @@
 		$(document).ready(e => {
 			scrollTop()
 			iniciarListaReservas()
+			recibirInformacion()
 		})
 
 	</script>

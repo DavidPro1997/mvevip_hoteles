@@ -1,3 +1,17 @@
+function recibirInformacion() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const check_In = urlParams.get('check_in');
+    const check_Out = urlParams.get('ckeck_out');
+    if (check_In && check_Out) {
+        abrirSpinner("Verificando sus reservas")
+        listarReservas(check_In, check_Out)
+        document.getElementById("fechaDesde").value = check_In
+        document.getElementById("fechaHasta").value = check_Out
+
+    }
+}
+
+
 function iniciarListaReservas(){
     establecerFechaDesde()
 }
@@ -5,14 +19,24 @@ function iniciarListaReservas(){
 
 
 function buscarReservas(){
+    abrirSpinner("Verificando sus reservas")
     const fechaDesde = document.getElementById("fechaDesde").value
     const fechaHasta = document.getElementById("fechaHasta").value
-    Obtener_API_Vuelos(null, '/api/hotelbeds/booking/reservas?from='+fechaDesde+'&to='+fechaHasta, datos => {
+    listarReservas(fechaDesde, fechaHasta)
+}
+
+
+
+
+function listarReservas(fecha1, fecha2){
+    Obtener_API_Vuelos(null, '/api/hotelbeds/booking/reservas?from='+fecha1+'&to='+fecha2, datos => {
         if (datos.estado) {
             if(datos.consulta.bookings.bookings){
                 armarReservas(datos.consulta.bookings.bookings)
+                cerrarSpinner()
             }else{
                 mensajeUsuario("info","Ooops...","No hay reservas en las fechas seleccionadas")
+                cerrarSpinner()
             }
             
         }
@@ -20,6 +44,7 @@ function buscarReservas(){
             mensajeUsuario("error","Ooops...",datos.error)
         }
     })
+
 }
 
 
@@ -38,21 +63,26 @@ function contruirItemsHoteles(reservas){
     reservas.forEach((element,index) => {
         lista = ""
         lista += `
-            <div class="strip_all_tour_list wow fadeIn" data-wow-delay="0.`+index+`s" id="hotel_`+index+`">
+            <div class="strip_all_tour_list wow fadeIn" data-wow-delay="0.`+index+`s" id="hotel_`+index+`" style="height:100%;">
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 position-relative">`
+                    <div class="col-lg-4 col-md-4 position-relative" style ="height: 100%;">`
                         if(element.status == "CONFIRMED"){
                             lista += `<div class="ribbon_3"><span>CONFIRMADA</span></div>`
                         }else if(element.status == "CANCELLED"){
                             lista += `<div class="ribbon_3 popular"><span>CANCELADA</span></div>`
                         }
                         lista += `
-                        <div class="img_list" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%">
-                            <img src="https://visionglobal.com.mx/wp-content/uploads/2015/08/HOTELES.COM-MUESTRA-SU-NUEVA-CAMPA%C3%91A1.jpg" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">
+                        <div class="img_list" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%">`
+                                if(element.hotel.images.length>0){
+                                    lista+= `<img src="`+element.hotel.images[0][element.hotel.images[0].length-1]+`" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">`
+                                }else{
+                                    lista+= `<img src="img/hoteles/mkv.png" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">`
+                                }
+                                lista +=`
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6" style="position: relative;">
-                        <div class="tour_list_desc">
+                        <div class="tour_list_desc" style="overflow-y: auto; margin-bottom: 15px;">
                             <div class="rating">
                                 <small class="voted" style="font-size:15px;">Ref: `+element.reference+`</small>
                             </div>
@@ -94,13 +124,26 @@ function contruirItemsHoteles(reservas){
                                     <span style="font-size: 12px;">`+element.hotel.checkOut+`</span>
                                 </div>
                             </div> 
+                            <div class="row" style="display: flex;">
+                                <div class="col-1">
+                                    <i class="icon-phone" style="font-size:13px; color:#99c21c;"></i>
+                                </div>
+                                <div class="col-11">
+                                    <span style="font-size: 12px;"><strong>Teléfonos: </strong></span> 
+                                    <span style="font-size: 12px;">`
+                                    element.hotel.phones.forEach(telefono => {
+                                        lista += telefono.phone_number+` `
+                                    });
+                                    lista += `</span>
+                                </div>
+                            </div>
                             `+sacarHabitaciones(element.hotel.rooms)+`
                             <div class="row" style="display: flex;">
                                 <div class="col-1">
                                     <i class="icon-download-2" style="font-size:13px; color:#99c21c;"></i>
                                 </div>
                                 <div class="col-11">
-                                    <a href="#" onclick="descargarVoucher('`+element.reference+`'); return false;">Descargar voucher</a>
+                                    <a href="#" onclick="descargarInfoReservaUnica('`+element.reference+`'); return false;">Descargar voucher</a>
                                 </div>
                             </div> 
                         </div>
@@ -131,124 +174,24 @@ function contruirItemsHoteles(reservas){
 }
 
 
-function descargarVoucher(id){
-    abrirSpinner("Descargando su voucher...")
-    Obtener_API_Vuelos(null,'/api/hotelbeds/booking/reservas/'+id, datos => {
-        if (datos.estado) {
-            const voucher = armarArrayVoucher(datos.consulta.booking)
-            apiVoucher(voucher)
-            // buscarReservas()
-            // cerrarSpinner()
-        } else {
-            cerrarSpinner()
-            mensajeUsuario("error","Ooops...",datos.error)            
-        }
-    })
-}
-
-
-function apiVoucher(datos){
-    Enviar_API_Vuelos(JSON.stringify(datos), '/api/hotelbeds/booking/voucher', (datos) => {
-        if (datos.estado) {
-            descargarPDF(datos.base64)
-            cerrarSpinner()
-            
-        } else {
-            cerrarSpinner();
-            mensajeUsuario('error', 'Ooops...', datos.error);
-        }
-    });
-}
-
-
-function descargarPDF(base64, nombreArchivo = 'voucher_reserva_hotel.pdf') {
-    // Convertir Base64 a un blob
-    const blob = base64ToBlob(base64, 'application/pdf');
-    
-    // Crear un enlace para descargar el archivo
-    const enlace = document.createElement('a');
-    enlace.href = URL.createObjectURL(blob);
-    enlace.download = nombreArchivo;
-    
-    // Simular el clic en el enlace
-    document.body.appendChild(enlace);
-    enlace.click();
-    
-    // Limpiar el DOM
-    document.body.removeChild(enlace);
-}
-
-// Función auxiliar para convertir Base64 a Blob
-function base64ToBlob(base64, contentType = '', sliceSize = 512) {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-    
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-    }
-    
-    return new Blob(byteArrays, { type: contentType });
-}
-
-
-
-function armarArrayVoucher(datos){
-    aux = {
-        tipo: "voucher_hotel",
-        booking_id: datos.reference,
-        holder_name: datos.holder.name+" "+datos.holder.surname,
-        country: datos.hotel.destinationCode,
-        hotel_name: datos.hotel.name,
-        hotel_address: datos.hotel.destinationName,
-        hotel_category: datos.hotel.categoryName,
-        hotel_phone: "+54988182490",
-        check_in: datos.hotel.checkIn,
-        check_out: datos.hotel.checkOut,
-        vat_numer: datos.hotel.supplier.vatNumber,
-        reference: datos.clientReference,
-        remark_cliente: datos.remark,
-        rooms: []
-    }
-    datos.hotel.rooms.forEach((element,index) => {
-        const lista = {
-            room_number: element.rates[0].rooms,
-            room_name: element.name,
-            acomodation: element.boardName,
-            name_pax: element.paxes[0].name+" "+element.paxes[0].surname,
-            adults: element.rates[0].adults.toString(),
-            children: element.rates[0].children.toString(),
-            age_children: "",
-            board_basis: "Descripcion",
-            rate_comments: element.rateComments,
-            payable: element.paymentType
-        }
-        aux.rooms.push(lista)
-    });
-    return aux
-}
-
-
 
 function sacarHabitaciones(habitaciones){
     let lista = ""
-    habitaciones.forEach(element => {
-        lista += `
+    habitaciones.forEach(rooms => {
+        rooms.rates.forEach(element => {
+            lista += `
             <div class="row" style="display: flex;">
                 <div class="col-1">
                     <i class="icon-drive" style="font-size:13px; color:#99c21c;"></i>
                 </div>
                 <div class="col-11">
-                    <span style="font-size: 12px;"><strong>`+element.rates[0].rooms+` Habitación(es) `+element.code+`:</strong></span> 
-                    <span style="font-size: 12px;"> para `+element.paxes.length+` person(as) con `+element.rates[0].boardCode+`</span>
+                    <span style="font-size: 12px;"><strong>`+element.rooms+` Habitación(es) `+rooms.code+`:</strong></span> 
+                    <span style="font-size: 12px;"> para `+rooms.paxes.length+` person(as) con `+element.boardCode+`</span>
                 </div>
             </div> 
         `
+        });
+        
     });
     return lista
 }
@@ -325,7 +268,7 @@ function construirHabitaciones2(habitaciones,codigoHotel,nombreHotel, ocupantes,
 function establecerFechaDesde(){
     flatpickr("#fechaDesde", {
         dateFormat: "Y-m-d",
-        disableMobile: true // Opcional: evita que el selector se convierta en un selector móvil
+        disableMobile: true 
     }) 
 }
 

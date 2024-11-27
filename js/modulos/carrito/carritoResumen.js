@@ -81,9 +81,9 @@ function validarDatosHoteles(){
                     tolerance: 2
                 }
                 data.ocupantes.forEach((element,index) => {
-                    let id= armarId(index, data.ocupantes)
+                    let id= armarId(0,element.rooms,element.adults, element.children, element.paxes)
                     let habitacion = {
-                        rateKey: element.rateKey,
+                        rateKey: element.ratekey,
                         paxes: []
                     }
                     for(let k=0; k<element.rooms;k++){

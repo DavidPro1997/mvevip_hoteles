@@ -76,10 +76,6 @@ app.config(['$routeProvider', '$locationProvider',function($routeProvider, $loca
             templateUrl : 'carrito.html',
             controller : 'CarritoController'
         })
-        .when('/carritoDetalles', {
-            templateUrl : 'carrito_detalles.html',
-            controller : 'CarritoDetallesController'
-        })
         .when('/listaTraslados', {
             templateUrl : 'lista_traslados.html',
             controller : 'ListaTrasladosController'
@@ -87,6 +83,10 @@ app.config(['$routeProvider', '$locationProvider',function($routeProvider, $loca
         .when('/listaHoteles', {
             templateUrl : 'lista_hoteles.html',
             controller : 'ListaHotelesController'
+        })
+        .when('/hotelDetalle', {
+            templateUrl : 'hotel_detalle.html',
+            controller : 'HotelDetalleController'
         })
         .when('/reservasHoteles', {
             templateUrl : 'lista_hoteles_reservas.html',
@@ -173,9 +173,6 @@ app.controller('CarritoController', ['$scope', function($scope) {
     $scope.message = 'Bienvenido al carrito';
 }]);
 
-app.controller('CarritoDetallesController', ['$scope', function($scope) {
-    $scope.message = 'Bienvenido al detalle del carrito';
-}]);
 
 app.controller('ListaTrasladosController', ['$scope', function($scope) {
     $scope.message = 'Bienvenido a la lista de traslados';
@@ -204,5 +201,10 @@ app.controller('ListaCatalogosToursController', ['$scope', function($scope) {
 app.controller('TourDetalleController', ['$scope', function($scope) {
     $scope.message = 'Bienvenido al detalle del tour';
 }]);
+
+app.controller('HotelDetalleController', ['$scope', function($scope) {
+    $scope.message = 'Bienvenido al detalle del hoteles';
+}]);
+
 
 

@@ -1,22 +1,4 @@
 
-// function reservarHoteles(){
-//     Enviar_API_Vuelos(JSON.stringify(arrayReservaHoteles),'/api/hotelbeds/booking/confirmacion', datos => {
-//         if (datos.estado){
-//             cerrarModal()
-//             exitoReserva()
-//         }else{
-//             cerrarModal()
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Oops...',
-//                 text: datos.error,
-//                 confirmButtonText: 'Entendido'
-//             })                        
-//         }
-//     })
-// }
-
-
 
 function editarHeaderFinalizar(){
     lista = ""
@@ -86,65 +68,50 @@ function irDetalle(){
 
 
 
-async function reservarTodo(){
+function reservarTodo(){
     abrirSpinner("Realizando su reserva, por favor espere...")
-    const estado = await reservarHotelesFinal(arrayReservaHoteles)
-    if(estado){
-        mensajeUsuario('success', 'Listo',"Se ha reservado los hoteles, verifica tus reservas en el modulo: Hoteles -> Mis Reservas")
-        avanzarFinal()
-        localStorage.removeItem("carritoHoteles")
-        verificarCarritosIndex()
-    }
-    else{
-        mensajeUsuario('info', 'Información',"Algunos items no se pudieron reservar, intentalo nuevamente. Si el problema persiste intenta quitar el item y añadirlo nuevamente.")
-    }
+    reservarHotelesFinal(arrayReservaHoteles)
 }
 
 
+
+
 async function reservarHotelesFinal(hoteles){
-    let aux = true
-
-    const promesas = hoteles.map(async (element,index) => {
-        return new Promise((resolve, reject) => {
-            Enviar_API_Vuelos(JSON.stringify(element),'/api/hotelbeds/booking/confirmacion', datos => {
-                if (datos.estado){
-                    console.log("Se reservó "+(index+1)+" hotel")
-                    eliminarHotelReservado("hotel_"+index,index)
-                    resolve(); // Resuelve la promesa cuando la respuesta es exitosa
-                }else{
-                    aux = false
-                    cerrarSpinner()
-                    mensajeUsuario('error', 'Ooops...',"El hotel "+index+" de "+hoteles.length+ " no se pudo reservar")
-                    reject(new Error(datos.error)); // Rechaza la promesa en caso de error
-                }
-            })
-        });
-    });
-
-    try {
-        // Espera a que todas las promesas se resuelvan
-        await Promise.all(promesas);
-        return aux; // Devuelve el carrito de hoteles completo
-    } catch (error) {
-        console.error("Error al confirmar tarifas:", error);
-        return false; // Devuelve false en caso de error
+    for (const [index, item] of hoteles.entries()) {
+        await llamarReservarApi(item, index);
     }
+    console.log("Todas las llamadas a la API se completaron.");
+    if(resumenGlobal.length>0){
+        mensajeUsuario('success', 'Listo',"Se ha reservado "+resumenGlobal.length+" hotel(es), verifica tus reservas en el modulo: Hoteles -> Mis Reservas")
+        localStorage.removeItem("carritoHoteles")
+        verificarCarritosIndex()
+        avanzarFinal()
+        cerrarSpinner()
+    }
+    else{
+        mensajeUsuario('info', 'Información',"Algunos items no se pudieron reservar, intentalo nuevamente. Si el problema persiste intenta quitar el item y añadirlo nuevamente.")
+        cerrarSpinner()
+    }
+    return true
+}
 
 
 
-    // hoteles.forEach((element,index) => {
-    //     Enviar_API_Vuelos(JSON.stringify(element),'/api/hotelbeds/booking/confirmacion', datos => {
-    //         if (datos.estado){
-    //             console.log("Se reservó "+(index+1)+" de "+hoteles.length)
-    //             eliminarHotelReservado("hotel_"+index,index)
-    //         }else{
-    //             aux = false
-    //             cerrarSpinner()
-    //             mensajeUsuario('error', 'Ooops...',"El hotel "+index+" de "+hoteles.length+ " no se pudo reservar")
-    //         }
-    //     })
-    // });
-    // return aux
+
+var resumenGlobal = []
+function llamarReservarApi(element, index){
+    return new Promise((resolve) => {
+        Enviar_API_Vuelos(JSON.stringify(element),'/api/hotelbeds/booking/confirmacion', datos => {
+            if (datos.estado){
+                resumenGlobal.push(datos.consulta.booking)
+                console.log("Se reservó el hotel "+(index+1))
+                // eliminarHotelReservado("hotel_"+index,index)
+            }else{
+                console.log("No se reservó el hotel "+(index+1))
+            }
+            resolve(); 
+        })
+    });
 }
 
 
@@ -181,16 +148,14 @@ function editarPropiedades(){
 
 
 function llenarAgradecimiento(){
-    const fechaActual = new Date(); 
-    const fecha = fechaActual.toISOString().split('T')[0]; 
-    const hora = fechaActual.toTimeString().split(' ')[0]; 
-    const total = precioTotalCarrito.actividades + precioTotalCarrito.tranfer + precioTotalCarrito.hoteles
-    let lista = ""
-    lista = `
+    console.log(resumenGlobal)
+    if(resumenGlobal.length>0){
+        let lista = ""
+        lista = `
                 <div class="form_title">
                     <h3><strong><i class="icon-ok"></i></strong>¡Gracias!</h3>
                     <p>
-                        ¡Reserva completada con éxito!
+                        ¡Reserva(s) completada(s) con éxito!
                     </p>
                 </div>
                 <div class="step">
@@ -204,52 +169,83 @@ function llenarAgradecimiento(){
                 <div class="form_title">
                     <h3><strong><i class="icon-tag-1"></i></strong>Resumen de reserva</h3>
                     <p>
-                        Información de la factura de su reserva
+                        Información del voucher de su reserva
                     </p>
-                </div>
-                <div class="step">
-                    <table class="table table-striped confirm">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>Nombre</strong>
-                                </td>
-                                <td>`
-                                    if(arrayReservaHoteles.length>0){
-                                        lista +=  arrayReservaHoteles[0].holder.name+` `+arrayReservaHoteles[0].holder.surname
-                                    }else{
-                                        lista += datosReservaCivitatis.customer.firstName+` `+datosReservaCivitatis.customer.lastName
-                                    }
-                                    lista += `
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Día de la reserva</strong>
-                                </td>
-                                <td>
-                                    `+fecha+`</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Hora de la reserva</strong>
-                                </td>
-                                <td>
-                                    `+hora+`
-                                    <br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Costo</strong>
-                                </td>
-                                <td>$`+total.toFixed(2)+` USD</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-    `
-    $("#agradecimiento").html(lista)
-
+                </div>`
+                resumenGlobal.forEach(element => {
+                    lista += `
+                        <div class="step">
+                            <table class="table table-striped confirm">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong>Número de Reserva</strong>
+                                        </td>
+                                        <td>`+element.reference+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Nombre reserva</strong>
+                                        </td>
+                                        <td>`+element.holder.name+` `+element.holder.surname+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Nombre hotel</strong>
+                                        </td>
+                                        <td>`+element.hotel.name+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Fecha creación</strong>
+                                        </td>
+                                        <td>
+                                            `+element.creationDate+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Check-in</strong>
+                                        </td>
+                                        <td>
+                                            `+element.hotel.checkIn+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Check-out</strong>
+                                        </td>
+                                        <td>
+                                            `+element.hotel.checkOut+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Estado</strong>
+                                        </td>
+                                        <td>`+element.status+`</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Costo</strong>
+                                        </td>
+                                        <td>$`+(parseFloat(element.totalNet)+100).toFixed(2)+` USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Detalles</strong></td>
+                                        <td><a href="/reservasHoteles?check_in=`+element.hotel.checkIn+`&ckeck_out=`+element.hotel.checkOut+`">Ver detalles aquí</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="text-align:center;">
+                            <button class="btn_1 green" style="background-color: #99c21c;" onclick="descargarInfoReservaUnica('`+element.reference+`')">
+                                Descargar voucher
+                            </button>
+                        </div>
+                    `
+                });
+                
+            $("#agradecimiento").html(lista)
+    }
 }
+
+
 
 
 function goHome(){

@@ -118,8 +118,6 @@ function armarDestinosHoteles(destinos){
 
 
 
-
-
 function escogerSalida(ciudadEscogida){
     document.getElementById("destinoHotel").value = ciudadEscogida.toUpperCase()
     var dropdown = document.getElementById("dropdownHoteles");
@@ -138,11 +136,17 @@ function establecerSalidaHoteles(){
 
 function establecerRegresoHotel(){
     var fechaSalida = document.getElementById("chekInHotel").value
+    
+    let fechaMaximaAux = new Date(fechaSalida);
+    fechaMaximaAux.setDate(fechaMaximaAux.getDate() + 30); 
+    let fechaMaxima = fechaMaximaAux.toISOString().split('T')[0];
+
     let fechaSalidaDate = new Date(fechaSalida);
     fechaSalidaDate.setDate(fechaSalidaDate.getDate() + 1); 
     let fechaMinima = fechaSalidaDate.toISOString().split('T')[0];
     flatpickr("#chekOutHotel", {
         minDate: fechaMinima, 
+        maxDate: fechaMaxima,
         dateFormat: "Y-m-d",
         disableMobile: true,
         defaultDate: fechaMinima,

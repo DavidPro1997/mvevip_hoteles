@@ -45,7 +45,7 @@ function actualizarPrecioTranfers(total){
 function actualizarPrecioHoteles(carritoHoteles){
     let total = 0
     carritoHoteles.forEach(element => {
-        total = total+parseFloat(element.hotel.totalNet)
+        total = total+parseFloat(element.hotel.totalNet)+100
     });
     precioTotalCarrito.hoteles= total
     actualizarTabla()
@@ -56,6 +56,7 @@ function actualizarPrecioHoteles(carritoHoteles){
 var protHotel=false
 async function verificarCarritoHoteles(){
     const carritoHoteles = JSON.parse(localStorage.getItem("carritoHoteles"))
+    console.log(carritoHoteles)
     if (carritoHoteles && carritoHoteles.length>0) {
         const carrito = await confirmarTarifasHoteles(carritoHoteles)
         if(carrito && carrito.length>0){
@@ -116,16 +117,6 @@ async function confirmarTarifasHoteles(carritoHotelesInfo) {
         return false; // Devuelve false en caso de error
     }
 }
-
-
-// function confirmarTarifasHotelesContinuar(){
-//     console.log(carritoHoteles)
-//     actualizarNumero(carritoHoteles.length,1)
-//     actualizarPrecioHoteles(carritoHoteles)
-//     contruirItemsHoteles(carritoHoteles)
-//     cargadoHotel = true
-//     cerrarModal()
-// }
 
 
 function actualizarTabla(){
@@ -224,14 +215,20 @@ function contruirItemsHoteles(carritoHoteles){
             <div class="strip_all_tour_list wow fadeIn" data-wow-delay="0.1s" id="hotel_`+index+`">
                 <div class="row">
                     <div class="col-lg-4 col-md-4 position-relative">`
-                        if(element.exclusiveDeal){
+                        if(element.hotel.exclusiveDeal){
                             lista += `
-                            <div class="ribbon_3"><span style="font-size:7px;">`+obtenerExclusiveDeal(element.exclusiveDeal)+`</span></div>
+                            <div class="ribbon_3"><span style="font-size:7px;">`+obtenerExclusiveDeal(element.hotel.exclusiveDeal)+`</span></div>
                             `
                         }
                         lista += `
                         <div class="img_list" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%">
-                            <img src="https://visionglobal.com.mx/wp-content/uploads/2015/08/HOTELES.COM-MUESTRA-SU-NUEVA-CAMPA%C3%91A1.jpg" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">
+                        `
+                            if(element.hotel.images){
+                                lista+= `<img src="`+element.hotel.images[0][element.hotel.images[0].length-1]+`" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">`
+                            }else{
+                                lista+= `<img src="img/hoteles/mkv.png" alt="Image" style="max-width: 100%; object-fit: cover; left:0;">`
+                            }
+                            lista +=`
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6" style="position: relative;">
@@ -246,7 +243,7 @@ function contruirItemsHoteles(carritoHoteles){
                                     <i class="icon-location" style="font-size:15px; color:#99c21c;"></i>
                                 </div>
                                 <div class="col-11" style="display: flex; flex-direction: column;">
-                                    <span style="font-size:12px;">Ubicacion: `+element.hotel.zoneName+` / `+element.hotel.destinationName+`</span>
+                                    <span style="font-size:12px;"><strong>Ubicacion: </strong>`+element.hotel.destinationName+` / `+element.hotel.address+`</span>
                                     <a href="https://www.google.com/maps?q=${element.hotel.latitude},${element.hotel.longitude}" target="_blank" style="font-size:12px;">
                                         Ver ubicación en el Mapa
                                     </a>
@@ -283,7 +280,15 @@ function contruirItemsHoteles(carritoHoteles){
                                 <i class="icon-trash" style="font-size: 24px;"></i>
                             </a>
                             <div>
-                                <sup>$</sup>`+(parseFloat(element.hotel.totalNet)).toFixed(2)+`
+                                <sup>$</sup>`
+                                if(element.hotel.sellingRate){
+                                    const precio = parseFloat(element.hotel.sellingRate)+100
+                                    lista += precio.toFixed(2)
+                                }else{
+                                    const precio = parseFloat(element.hotel.totalNet)+100
+                                    lista += precio.toFixed(2)
+                                }
+                                lista +=`
                                 <small>*Total</small>
                                 <small>
                                     <a href="#" 
@@ -315,11 +320,11 @@ function contruirItemsHoteles(carritoHoteles){
                                 }
                                 lista += `
                             </h6>                       
-                            <div id="rooms_`+element.hotel.code+`_`+armarId(auxIndex, element.ocupantes)+`_`+index+`">
+                            <div id="rooms_`+element.hotel.code+`_`+armarId(0,aux.rooms,aux.adults, aux.children, aux.paxes)+`_`+index+`">
                             </div>
                             <br>
                             <div class="row" style="margin-left: 20px; margin-right: 20px; display:none;" id="id_`+index+`_`+auxIndex+`">`
-                                let id = armarId(auxIndex, element.ocupantes)
+                                let id = armarId(0,aux.rooms,aux.adults, aux.children, aux.paxes)
                                 for(let j=0; j<aux.rooms; j++){
                                     if(aux.rooms>1){
                                         lista += `<span style="font-size: 12px;"><strong>HABITACIÓN `+(j+1)+`</strong></span><br><br>`
@@ -368,65 +373,43 @@ function contruirItemsHoteles(carritoHoteles){
             </div>
         `
         $("#listaHoteles").append(lista)
-        construirHabitaciones2(element.hotel.rooms,element.hotel.code,element.hotel.name, element.ocupantes, index)
+        dividirHabitaciones(element.hotel.rooms, element.hotel.code, index, element.hotel.name)
+        // construirHabitaciones2(element.hotel.rooms,element.hotel.code,element.hotel.name, element.ocupantes, index)
     });
     
 }
 
 
 
-
-function construirHabitaciones2(habitaciones,codigoHotel,nombreHotel, ocupantes, ayudanteIndice){
-    let lista = ""
-    habitaciones.forEach(element => {
-        let datos =   dividirPorTipo(element.rates,element.name, nombreHotel, ocupantes)
-        datos.forEach(data => {
-            lista  += `
-            <hr style="margin:0 0 10px 0; height: 2px;">
-            <h7 style="color: blue; margin-left:15px;"><strong>`+data.habitacion.toUpperCase()+`</strong></h7>
-            <br><br>
-            <div class="row">`
-                data.regimen.forEach((regimen, indice) => {
-                    if(indice > 0){
-                        lista += `<hr style="margin:0 0 10px 0;">`
-                    }
-                    lista +=`
-                    <div class="col-2 d-flex align-items-center">
-                        <small style="margin-left:15px;">`+regimen.boardName+`</small>
-                    </div>`
-                    regimen.valores.forEach((valores,index) => {
-                        if(index > 0){
-                            lista += `<hr style="margin:0 0 10px 0;">`
-                        }
-                        lista += `
-                            <div class="col-7 justify-content-center" style="display: flex; font-size:12px; align-items: center;" >
-                                `+cancelacion(valores)+`
-                            </div>
-                            <div class="col-3 justify-content-center" style="display: flex; flex-direction: column; align-items: center;">
-                                <span style="font-size: 14px"><strong>$`+valores.net+` USD</strong></span>
-                                <a href="" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">Detalles de precio</a>
-                                <div class="dropdown-menu p-3 text-muted" style="width: 700px;" style="display: none;">
-                                </div>
-                            </div>
-                            <div class="col-12 mt-2" style="display: flex; flex-direction: column;">
-                                <p style="margin-right: 15px; margin-left: 15px; text-align: justify;">
-                                    <strong>Comentarios</strong><br>
-                                    `+valores.rateComments+`
-                                </p>
-                            </div>
-                        `
-                    }); 
-                    
-                });
-                lista += `
-            </div>
-            `
-            $("#rooms_"+codigoHotel+"_"+data.id+"_"+ayudanteIndice).append(lista)
-            lista = ""
-        });
-    });
-
+function dividirHabitaciones(rooms, codigoHotel, index){
+    const datos_por_habitacion = dividirPorIdRate(rooms)
+    plasmarHabitaciones(datos_por_habitacion, codigoHotel, index)
 }
+
+
+
+function plasmarHabitaciones(habitacionesDivididas, codigoHotel, index){
+    let lista = ""
+    habitacionesDivididas.forEach(element => {
+        lista = ""
+        lista += obtenerRooms(0,element.rooms)
+        $("#rooms_"+codigoHotel+"_"+element.id+"_"+index).html(lista)        
+    });
+}
+
+
+
+function traducirTipoHabitacion(room){
+    // const tipo = room.split('.')[0];
+    // const resultado = tiposGlobal.find(item => item.type == tipo)
+    // if (resultado) {
+    //     return resultado.typeDescription.toUpperCase()
+    // } else {
+    //     return tipo.toUpperCase()
+    // }
+    return room
+}
+
 
    
 
