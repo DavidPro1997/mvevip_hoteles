@@ -92,8 +92,8 @@ function armarArrayVoucher(datos){
                 children: element.children.toString(),
                 age_children: element.childrenAges,
                 board_basis: element.boardName,
+                payable: element.paymentType,
                 rate_comments: element.rateComments,
-                payable: element.paymentType
             }
             aux.rooms.push(lista)
         });
