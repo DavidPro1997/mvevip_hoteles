@@ -148,7 +148,6 @@ function editarPropiedades(){
 
 
 function llenarAgradecimiento(){
-    console.log(resumenGlobal)
     if(resumenGlobal.length>0){
         let lista = ""
         lista = `
@@ -173,6 +172,12 @@ function llenarAgradecimiento(){
                     </p>
                 </div>`
                 resumenGlobal.forEach(element => {
+                    let contador = 0
+                    element.hotel.rooms.forEach(rooms => {
+                        rooms.rates.forEach(rates => {
+                            contador = contador + 1 
+                        });
+                    });
                     lista += `
                         <div class="step">
                             <table class="table table-striped confirm">
@@ -224,7 +229,7 @@ function llenarAgradecimiento(){
                                     <tr>
                                         <td><strong>Costo</strong>
                                         </td>
-                                        <td>$`+(parseFloat(element.totalNet)+100).toFixed(2)+` USD</td>
+                                        <td>$`+(parseFloat(element.totalNet)+(100*contador)).toFixed(2)+` USD</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Detalles</strong></td>

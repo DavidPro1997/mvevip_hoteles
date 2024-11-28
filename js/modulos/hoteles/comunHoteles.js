@@ -36,8 +36,7 @@ function dividirPorIdRate(rooms) {
             const existingRoom = result[rateId].find(r => r.code === room.code);
             if (!existingRoom) {
                 const filteredRoom = {
-                    code: room.code,
-                    name: room.name,
+                    ...room,
                     rates: room.rates.filter(r => {
                         const currentRateId = armarId(1, r.rooms, r.adults, r.children, r.childrenAges);
                         return currentRateId === rateId;
@@ -55,16 +54,26 @@ function dividirPorIdRate(rooms) {
 
 
 function obtenerRooms(tipo, rooms_, id, codigoHotel, nombreHotel){
-    let lista = ""
+    let data = {
+        lista: "",
+        precio: 0
+    }
     rooms_.forEach(rooms => {
         if(rooms.rates.length>0){
-            lista += `
+            data.lista += `
             <hr style="margin:0 0 10px 0; height: 2px;">
             <h7 style="color: blue; margin-left:15px;"><strong>`+rooms.name.toUpperCase()+`</strong></h7>
-            <small style="margin-left:8px;">(`+traducirTipoHabitacion(rooms.code)+`)</small>
-            `
+            <small style="margin-left:8px;">`
+            if(tipo){
+                data.lista += `(`+traducirTipoHabitacion(rooms.code)+`)`
+            }
+            else{
+                data.lista += `(`+rooms.typeDescription+`)`
+            }
+            data.lista +=`
+            </small>`
             rooms.rates.forEach(rates => {
-                lista += `
+                data.lista += `
                     <div class="row mb-2">
                         <div class="col-4 d-flex align-items-center">
                             <small style="margin-left:15px;">`+rates.boardName+`</small>
@@ -74,26 +83,28 @@ function obtenerRooms(tipo, rooms_, id, codigoHotel, nombreHotel){
                         </div>
                         <div class="col-2 justify-content-center" style="display: flex; flex-direction: column; align-items: end;">
                             <span style="font-size: 14px"><strong>$`
+                            let precio
                             if(rates.sellingRate){
-                                const precio = parseFloat(rates.sellingRate)+100
-                                lista += precio.toFixed(2)
+                                precio = parseFloat(rates.sellingRate)+100
+                                data.lista += precio.toFixed(2)
                             }else{
-                                const precio = parseFloat(rates.net)+100
-                                lista += precio.toFixed(2)
+                                precio = parseFloat(rates.net)+100
+                                data.lista += precio.toFixed(2)
                             }
-                            lista +=` USD</strong></span>
+                            data.precio = precio
+                            data.lista +=` USD</strong></span>
                         </div>`
                         if(tipo){
-                            lista += `
+                            data.lista += `
                                 <div class="col-1 d-flex align-items-center justify-content-center">
                                     <input class="form-check-input" type="radio" name="radio`+id+`" id="customradio2" style="transform: scale(1.4);" value='`+JSON.stringify(informacionResumen(id,rates.adults,rates.children,rates.childrenAges,rates,codigoHotel,nombreHotel,rooms.name))+`' onclick="escogerHotel(this.value)">
                                 </div>
                             `
                         }
-                        lista += `
+                        data.lista += `
                     </div> `
                     if(!tipo){
-                        lista += `
+                        data.lista += `
                             <div class="col-12 mt-2" style="display: flex; flex-direction: column;">
                                 <p style="margin-right: 15px; margin-left: 15px; text-align: justify;">
                                     <strong>Comentarios</strong><br>
@@ -105,7 +116,7 @@ function obtenerRooms(tipo, rooms_, id, codigoHotel, nombreHotel){
             }); 
         } 
     });
-    return lista
+    return data
 }
 
 // function dividirPorTipo(tarifa,nombre, hotel, ocupantes){

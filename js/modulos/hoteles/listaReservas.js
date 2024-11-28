@@ -31,7 +31,7 @@ function buscarReservas(){
 function listarReservas(fecha1, fecha2){
     Obtener_API_Vuelos(null, '/api/hotelbeds/booking/reservas?from='+fecha1+'&to='+fecha2, datos => {
         if (datos.estado) {
-            if(datos.consulta.bookings.bookings){
+            if(datos.consulta.bookings.bookings.length>0){
                 armarReservas(datos.consulta.bookings.bookings)
                 cerrarSpinner()
             }else{
@@ -49,10 +49,7 @@ function listarReservas(fecha1, fecha2){
 
 
 function armarReservas(reservas){
-    
-        contruirItemsHoteles(reservas)
-    
-    
+    contruirItemsHoteles(reservas)
 }
 
 
@@ -185,8 +182,8 @@ function sacarHabitaciones(habitaciones){
                     <i class="icon-drive" style="font-size:13px; color:#99c21c;"></i>
                 </div>
                 <div class="col-11">
-                    <span style="font-size: 12px;"><strong>`+element.rooms+` Habitación(es) `+rooms.code+`:</strong></span> 
-                    <span style="font-size: 12px;"> para `+rooms.paxes.length+` person(as) con `+element.boardCode+`</span>
+                    <span style="font-size: 12px;"><strong>`+element.rooms+` Habitación(es) `+rooms.typeDescription+`:</strong></span> 
+                    <span style="font-size: 12px;"> para `+rooms.paxes.length+` person(as) con `+element.description+`</span>
                 </div>
             </div> 
         `

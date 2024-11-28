@@ -333,15 +333,22 @@ function armarHoteles(datos){
                             <p>`+element.rooms.length+` tipos de habitaciones se adaptan a tu busqueda:</p>
                             <div clas="row" style="display: flex;">
                                 <div class="col-2">
-                                    <i class="icon_set_1_icon-41" style="font-size:35px; color:#99c21c;"></i>
+                                    <i class="icon-location" style ="color:#99c21c;"></i>
                                 </div>
                                 <div class="col-9" style="display: flex; flex-direction: column;">
-                                    <span>Ubicacion: `+element.zoneName+` / `+element.destinationName+`</span>
-                                    <a href="https://www.google.com/maps?q=${element.latitude},${element.longitude}" target="_blank">
+                                    <span>`+element.destinationName+` / `+element.address+` / <a href="https://www.google.com/maps?q=${element.latitude},${element.longitude}" target="_blank">
                                         Ver ubicación en el Mapa
-                                    </a>
+                                    </a></span>
                                 </div>
                             </div> 
+                            <div clas="row" style="display: flex;">
+                                <div class="col-2">
+                                    <i class="icon-phone" style ="color:#99c21c;"></i>
+                                </div>
+                                <div class="col-9" style="display: flex; flex-direction: column;">
+                                    <span>`+element.phones[0].phone_number+`</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3">

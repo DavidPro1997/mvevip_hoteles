@@ -315,6 +315,7 @@ async function sacarCache(idHotel){
 }
 
 
+
 async function construirHabitaciones(info){
     const hotel = await sacarCache(info.idHotel) 
     let lista = ""
@@ -362,7 +363,7 @@ function plasmarHabitaciones(habitacionesDivididas){
     let lista = ""
     habitacionesDivididas.forEach(element => {
         lista = ""
-        lista += lista += obtenerRooms(1,element.rooms, element.id, codigoHotelGlobal, nombreHotelGlobal)
+        lista += lista += obtenerRooms(1,element.rooms, element.id, codigoHotelGlobal, nombreHotelGlobal).lista
         lista += `<br><br><br><br>`
         $("#pasajero_"+element.id).html(lista)        
     });
@@ -424,6 +425,7 @@ function agregarItemHoteles(informacion){
 
 var resumenCompra = []
 function escogerHotel(datos){
+    console.log(ocupantes)
     let informacion = JSON.parse(datos);
     const index = resumenCompra.findIndex(item => item.id === informacion.id);
     if (index === -1) {
@@ -431,11 +433,17 @@ function escogerHotel(datos){
     } else {
         resumenCompra[index] = informacion;
     }
-    if(resumenCompra.length>0){
+
+
+    if(resumenCompra.length==ocupantes.length){
         plasmarResumenCompra(resumenCompra)
     }
     else{
-        $("#resumenContenedor").hide()
+        plasmarResumenCompra(resumenCompra)
+        const myButton = document.getElementById('boton_resumen');
+        myButton.disabled = true; // Deshabilitar el botón
+        myButton.style.opacity = '0.5'; // Opacar el botón
+        myButton.style.cursor = 'not-allowed'; // Cambiar el cursor
     }
 }
 
@@ -466,7 +474,7 @@ function plasmarResumenCompra(cuartos){
             </div>
             <div class="col-md-2" style="display: flex; flex-direction: column; align-items: center;">
                 <strong style="margin: 0;" font-size:22px;>TOTAL: $`+(precioTotal).toFixed(2)+`</strong>
-                <button type="submit" class="btn_full" onclick="reservarHotel();" style="background-color: #99c21c; color: white;">
+                <button type="submit" class="btn_full" onclick="reservarHotel();" style="background-color: #99c21c; color: white;" id = "boton_resumen">
                     RESERVAR
                 </button>
             </div>

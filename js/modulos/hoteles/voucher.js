@@ -65,39 +65,48 @@ function base64ToBlob(base64, contentType = '', sliceSize = 512) {
 
 
 function armarArrayVoucher(datos){
+    let telefonos = ""
+    datos.hotel.phones.forEach(element => {
+        telefonos += element.phone_number+" "
+    });
     aux = {
         tipo: "voucher_hotel",
         booking_id: datos.reference,
         holder_name: datos.holder.name+" "+datos.holder.surname,
-        country: datos.hotel.destinationCode,
+        city: datos.hotel.destinationName,
         hotel_name: datos.hotel.name,
-        hotel_address: datos.hotel.destinationName,
+        hotel_address: datos.hotel.address,
         hotel_category: datos.hotel.categoryName,
-        hotel_phone: "+54988182490",
+        hotel_phone: telefonos,
         check_in: datos.hotel.checkIn,
         check_out: datos.hotel.checkOut,
+        metodo_pago: datos.hotel.supplier.name,
         vat_numer: datos.hotel.supplier.vatNumber,
         reference: datos.clientReference,
         remark_cliente: datos.remark,
         rooms: []
     }
     datos.hotel.rooms.forEach((cuartos,index) => {
+        let edadNinos= ""
+        cuartos.paxes.forEach(pasajeros => {
+            if(pasajeros.type == "CH"){
+                edadNinos += pasajeros.age + " "
+            }
+        });
         cuartos.rates.forEach(element => {
             const lista = {
                 room_number: element.rooms,
                 room_name: cuartos.name,
-                acomodation: cuartos.code, //si es habitacion o departamento esta mal
+                acomodation: cuartos.typeDescription, //si es habitacion o departamento esta mal
                 name_pax: cuartos.paxes[0].name+" "+cuartos.paxes[0].surname,
                 adults: element.adults.toString(),
                 children: element.children.toString(),
-                age_children: element.childrenAges,
+                age_children: edadNinos,
                 board_basis: element.boardName,
-                payable: element.paymentType,
                 rate_comments: element.rateComments,
             }
             aux.rooms.push(lista)
         });
     });
-    console.log(aux)
     return aux
 }
