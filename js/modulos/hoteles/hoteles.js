@@ -101,11 +101,11 @@ function filtrarNombre(input) {
 }
 
 
-
+var tipoHabitacionGlobal = []
 var hotelesFiltradosGlobalCat = []
 var preciosGlobalHoteles = {min:0, max:0}
 function armarfiltros(hoteles){
-    var hotelesPuntos = {}
+    var categorias = {}
     var hotelesPrecios = {min:10000000, max:0}
     hoteles.forEach(element => {
         //Precios
@@ -121,17 +121,63 @@ function armarfiltros(hoteles){
         let puntos = element.categoryName.match(/\d+/)
         if(puntos){ puntos = obtenerPuntacion(parseInt(puntos[0])).puntos}
         else{ puntos = element.categoryName }
-        if (!hotelesPuntos[puntos]) {
-            hotelesPuntos[puntos] = [];
+        if (!categorias[puntos]) {
+            categorias[puntos] = [];
         }
-        hotelesPuntos[puntos].push(element);
+        categorias[puntos].push(element);
+
+
+        //tipo habitacion
+        sacarTipos(element.rooms)
+
+
+
     });
-    hotelesFiltradosGlobalCat = hotelesPuntos
+    hotelesFiltradosGlobalCat = categorias
     preciosGlobalHoteles.min = hotelesPrecios.min
     preciosGlobalHoteles.max = hotelesPrecios.max
-    armarFiltroCategorias(hotelesPuntos)
+    armarFiltroCategorias(categorias)
     armarFiltroPrecios(parseFloat(hotelesPrecios.min),parseFloat(hotelesPrecios.max))
+    sacarTipoHabitacion(tipoHabitacionGlobal)
 }
+
+
+function sacarTipos(rooms){
+    rooms.forEach(element => {
+        if(!tipoHabitacionGlobal.includes(element.code)){
+            tipoHabitacionGlobal.push(element.code)
+        }
+    });
+}
+
+
+function sacarTipoHabitacion(){
+    Enviar_API_Vuelos(JSON.stringify(tipoHabitacionGlobal), '/api/hotelbeds/booking/roomtypes', datos => {
+        if (datos.estado){
+            armarFiltroTipoHabitacion(datos.consulta)
+        }else{
+            mensajeUsuario('error','Oops...',datos.error)     
+        }
+    })
+}
+
+
+function armarFiltroTipoHabitacion(cat){
+    let lista = ""
+    cat.forEach(element => {
+        lista += `
+            <li>
+                <label class="container_check">
+                    <span class="rating">`+element.typeDescription.toUpperCase()+` </span>
+                    <input type="checkbox" value="`+element.type+`" class="checkbox-item" data-group="grupo2" checked>
+                    <span class="checkmark"></span>
+                </label>
+            </li>
+        `
+    });
+    $("#listaTipoHabitacion_hotel").html(lista)
+}
+
 
 
 
@@ -151,7 +197,7 @@ function armarFiltroCategorias(cat){
                         lista +=
                         `
                     </span>(`+cat[element].length+`)
-                    <input type="checkbox" value="`+element+`" class="checkbox-item">
+                    <input type="checkbox" value="`+element+`" class="checkbox-item" data-group="grupo1" checked>
                     <span class="checkmark"></span>
                 </label>
             </li>
@@ -162,16 +208,65 @@ function armarFiltroCategorias(cat){
 
 
 
+document.getElementById('toggle-grupo2').addEventListener('click', function () {
+    const group = this.dataset.group; // Obtener el grupo del botón
+    const checkboxes = document.querySelectorAll(`.checkbox-item[data-group="${group}"]`); // Seleccionar checkboxes del grupo
+    const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked); // Verificar si todos están seleccionados
+    checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+    this.textContent = allChecked ? "Marcar todos" : "Quitar todos";
+});
+
+
+
+document.getElementById('toggle-grupo1').addEventListener('click', function () {
+    const group = this.dataset.group; // Obtener el grupo del botón
+    const checkboxes = document.querySelectorAll(`.checkbox-item[data-group="${group}"]`); // Seleccionar checkboxes del grupo
+    const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked); // Verificar si todos están seleccionados
+    checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+    this.textContent = allChecked ? "Marcar todos" : "Quitar todos";
+});
+
+
+
+
 function filtrarHoteles(){
     abrirSpinner("Filtrando...")
     setTimeout(function() {
         var hotelesFiltrados = {}
         hotelesFiltrados = validarCategoria()
+        hotelesFiltrados = validarTipoHabitaciones(hotelesFiltrados)
         hotelesFiltrados = validarPrecios(hotelesFiltrados)
         hotelesFiltrados = validarOrdenPrecio(hotelesFiltrados)
         armarHoteles(hotelesFiltrados)   
     }, 500);
 }
+
+
+
+function validarTipoHabitaciones(hoteles){
+    const checkboxes = document.querySelectorAll('.checkbox-item[data-group="grupo2"]');
+    const selected = [];
+    const notSelected = [];
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            selected.push(checkbox.value); // Almacenar el valor si está seleccionado
+        } else {
+            notSelected.push(checkbox.value); // Almacenar el valor si no está seleccionado
+        }
+    });
+    const arrayFiltrado = armarHabitacionesFiltradas(hoteles,selected)
+    return arrayFiltrado
+}
+
+
+
+function armarHabitacionesFiltradas(hoteles, seleccionados) {
+    return hoteles.filter(hotel => {
+        return hotel.rooms.some(room => seleccionados.includes(room.code.split('.')[0]));
+    });
+}
+
+
 
 
 

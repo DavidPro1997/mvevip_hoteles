@@ -518,7 +518,7 @@ function armarFiltroTipoHabitacion(cat){
             <li>
                 <label class="container_check">
                     <span class="rating">`+element.typeDescription.toUpperCase()+` </span>
-                    <input type="checkbox" value="`+element.type+`" class="checkbox-item" checked>
+                    <input type="checkbox" value="`+element.type+`" class="checkbox-item">
                     <span class="checkmark"></span>
                 </label>
             </li>
@@ -542,8 +542,6 @@ function filtrarHabitaciones(){
     });
     const arrayFiltrado = armarHabitacionesFiltradas(roomsGlobal,selected)
     dividirHabitaciones(arrayFiltrado)
-    
-
 }
 
 
