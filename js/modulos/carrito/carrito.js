@@ -354,7 +354,7 @@ function plasmarHabitaciones(habitacionesDivididas, codigoHotel, index){
         precioHotel = precioHotel + parseFloat(datos.precio)
         $("#rooms_"+codigoHotel+"_"+element.id+"_"+index).html(lista)        
     });
-    $("#precioHotel_"+codigoHotel+"_"+index).html(precioHotel)
+    $("#precioHotel_"+codigoHotel+"_"+index).html(parseFloat(precioHotel).toFixed(2))
     precioHotelTotalCarrito = precioHotelTotalCarrito + precioHotel
     actualizarTabla(precioHotelTotalCarrito)
 }
