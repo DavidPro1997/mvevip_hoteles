@@ -148,7 +148,7 @@ function contruirItemsHoteles(reservas){
                     <div class="col-lg-2 col-md-2" style="position: relative;">
                         <div class="price_list">
                             <div>
-                                <sup>$</sup>`+(parseFloat(element.totalNet)).toFixed(2)+`
+                                <sup>$</sup>`+(parseFloat(element.totalNet)+(100*numeroRoomsTotal)).toFixed(2)+`
                                 <small>*Pendiente: $`+(parseFloat(element.pendingAmount)).toFixed(2)+`</small>`
                                 if(element.status == "CONFIRMED"){
                                     lista += `
@@ -171,11 +171,13 @@ function contruirItemsHoteles(reservas){
 }
 
 
-
+var numeroRoomsTotal = 0
 function sacarHabitaciones(habitaciones){
+    numeroRoomsTotal = 0
     let lista = ""
     habitaciones.forEach(rooms => {
         rooms.rates.forEach(element => {
+            numeroRoomsTotal = numeroRoomsTotal + parseInt(element.rooms)
             lista += `
             <div class="row" style="display: flex;">
                 <div class="col-1">
