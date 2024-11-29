@@ -319,7 +319,7 @@ function armarHoteles(datos){
                         </div>
                     </div>
                     <div class="col-lg-5 col-md-5">
-                        <div class="tour_list_desc">
+                        <div class="tour_list_desc" style="overflow-y: auto; margin-bottom: 15px;">
                             <div class="rating">`
                                 let puntos = element.categoryName.match(/\d+/)
                                 if(puntos){
@@ -347,6 +347,31 @@ function armarHoteles(datos){
                                 </div>
                                 <div class="col-9" style="display: flex; flex-direction: column;">
                                     <span>`+element.phones[0].phone_number+`</span>
+                                </div>
+                            </div>
+                            <br>
+                            <div clas="row" style="display: flex;">
+                                <div class="col-2">
+                                    <i class="icon-food" style ="color:#99c21c;"></i>
+                                </div>
+                                <div class="col-9" style="display: flex; flex-direction: column;">
+                                    <span>Servicio del Hotel:</span>
+                                </div>
+                            </div>
+                            <div clas="row" style="display: flex;">
+                                <div class="col-12 mt-1" style="display: flex; flex-direction: column; margin-left: 25px">
+                                    <span>
+                                    <ul class="list_ok">`
+                                        element.facilities.forEach(facilidades => {
+                                            lista += `<li>`+facilidades.name
+                                            if(facilidades.ind_yes_or_not){
+                                                lista += ` (<i class ="icon-money" style="color:#99c21c"></i>+)`
+                                            }
+                                            lista += `</li>`
+                                        });
+                                        lista += `
+                                    </ul>
+                                    </span>
                                 </div>
                             </div>
                         </div>
